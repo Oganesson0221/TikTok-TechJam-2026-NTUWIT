@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -q normal
+#PBS -l select=1:ncpus=16:ngpus=1:mem=110gb
+#PBS -l walltime=04:00:00
+#PBS -N kuairand-agent
+#PBS -j oe
+
+set -euo pipefail
+
+cd "$PBS_O_WORKDIR"
+module purge
+module load pytorch/2.10.0-py3-cu12.6
+NSCC_PYTORCH_SITE=/app/apps/pytorch/2.10.0-py3-cu12.6/lib/python3.13/site-packages
+export PYTHONPATH="$PBS_O_WORKDIR/src:$NSCC_PYTORCH_SITE${PYTHONPATH:+:$PYTHONPATH}"
+AGENT_CONFIG="${AGENT_CONFIG:-configs/nscc_agent.json}"
+
+echo "PBS job: ${PBS_JOBID:-unknown}"
+echo "Working directory: $PBS_O_WORKDIR"
+nvidia-smi
+
+python - <<'PY'
+import torch
+print("torch", torch.__version__)
+print("cuda", torch.cuda.is_available())
+print("gpu", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "NONE")
+if not torch.cuda.is_available():
+    raise SystemExit("CUDA is unavailable inside the NSCC job")
+PY
+python -m research_rec.agent_cli --config "$AGENT_CONFIG"

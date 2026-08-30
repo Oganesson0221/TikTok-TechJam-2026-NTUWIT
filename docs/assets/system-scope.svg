@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img" aria-labelledby="title desc">
+  <title id="title">LoopRank input and output scope</title>
+  <desc id="desc">Structured user, candidate video, and context features enter a click scoring model that returns scores and ranked candidate video IDs. The system does not detect fake videos.</desc>
+  <rect width="1080" height="360" fill="#f5f3ed"/>
+  <g font-family="system-ui, sans-serif">
+    <rect x="40" y="55" width="250" height="250" fill="#fffefa" stroke="#d8d5cc"/>
+    <text x="70" y="91" fill="#aa2d1d" font-size="11" font-weight="700" letter-spacing="1.5">STRUCTURED INPUT</text>
+    <text x="70" y="132" fill="#191917" font-family="Georgia, serif" font-size="25">Candidate impression</text>
+    <text x="70" y="177" fill="#686861" font-size="14">User ID + profile ranges</text>
+    <text x="70" y="207" fill="#686861" font-size="14">Video ID + metadata</text>
+    <text x="70" y="237" fill="#686861" font-size="14">Feed + time context</text>
+    <text x="330" y="189" fill="#e34a32" font-family="Georgia, serif" font-size="34">→</text>
+    <rect x="385" y="92" width="310" height="176" fill="#25344a"/>
+    <text x="425" y="131" fill="#f8dfd8" font-size="11" font-weight="700" letter-spacing="1.5">DCN RANKER</text>
+    <text x="425" y="181" fill="#ffffff" font-family="Georgia, serif" font-size="27">P(click | user, item, context)</text>
+    <text x="425" y="220" fill="#bdc4ce" font-size="13">Embeddings · crosses · deep tower</text>
+    <text x="735" y="189" fill="#e34a32" font-family="Georgia, serif" font-size="34">→</text>
+    <rect x="790" y="55" width="250" height="250" fill="#191917"/>
+    <text x="820" y="91" fill="#f8dfd8" font-size="11" font-weight="700" letter-spacing="1.5">RANKED OUTPUT</text>
+    <text x="820" y="132" fill="#ffffff" font-family="Georgia, serif" font-size="25">Recommended order</text>
+    <text x="820" y="178" fill="#ffffff" font-size="14">01  Video 3131   0.771</text>
+    <text x="820" y="208" fill="#c9d0d9" font-size="14">02  Video 3797   0.696</text>
+    <text x="820" y="238" fill="#c9d0d9" font-size="14">03  Video 5963   0.689</text>
+    <text x="40" y="335" fill="#686861" font-size="12">Scope note: no video pixels, audio, factual claims, or authenticity labels are analyzed.</text>
+  </g>
+</svg>

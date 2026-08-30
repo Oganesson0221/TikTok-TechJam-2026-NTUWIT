@@ -1,0 +1,28 @@
+{
+  "max_experiments": 3,
+  "walltime_hours": 3.0,
+  "convergence_epsilon": 0.0001,
+  "convergence_patience": 2,
+  "max_retries": 2,
+  "log_dir": "artifacts/bonus_1k_sweep",
+  "decision_mode": "queued",
+  "candidates": [
+    {
+      "name": "kuairand_1k_multitask_aux20",
+      "hypothesis": "Multi-feedback transfer should improve the optional 1K click-ranking benchmark.",
+      "config": "configs/nscc_1k_multitask_dcn.json"
+    },
+    {
+      "name": "kuairand_1k_multitask_allneg",
+      "hypothesis": "All logged negative exposures may improve calibration on the larger 1K corpus.",
+      "config": "configs/nscc_1k_multitask_dcn.json",
+      "overrides": ["data.negative_ratio=null"]
+    },
+    {
+      "name": "kuairand_1k_multitask_aux10",
+      "hypothesis": "Lower auxiliary weight tests whether click should dominate transfer on the 1K corpus.",
+      "config": "configs/nscc_1k_multitask_dcn.json",
+      "overrides": ["model.auxiliary_loss_weight=0.1"]
+    }
+  ]
+}

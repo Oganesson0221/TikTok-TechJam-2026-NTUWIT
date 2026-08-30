@@ -1,0 +1,27 @@
+{
+  "audited_at": "2026-08-30",
+  "challenge_page": "https://tiktoktechjam2026.devpost.com/",
+  "challenge_page_deliverables": [
+    "written project description",
+    "public code repository with comprehensive README",
+    "public three-minute end-to-end demo video"
+  ],
+  "kuairand_source": "https://kuairand.com/",
+  "kuairand_archive": "https://zenodo.org/records/10439422",
+  "cwm_source": "https://github.com/hyz20/CWM",
+  "cwm_commit_audited": "c36da4ba745a491545490be1b2b976180ab69c87",
+  "findings": {
+    "cwm_evaluation_candidate_protocol": "CWM ranks observed rows within each user group.",
+    "cwm_target_mismatch": "Upstream CWM evaluates watch-time/long-view objectives and does not publish this challenge's click Recall@50 baseline.",
+    "organizer_numeric_baseline_found": false,
+    "organizer_submission_schema_found": false,
+    "organizer_convergence_constants_found": false
+  },
+  "implemented_adapter": {
+    "command": "export-recommendations",
+    "generic_columns": ["user_id", "video_id", "score", "rank"],
+    "label_blind": true,
+    "checksum_manifest": true
+  },
+  "policy": "Do not invent an official baseline delta or claim leaderboard equivalence until organizer artifacts are supplied."
+}

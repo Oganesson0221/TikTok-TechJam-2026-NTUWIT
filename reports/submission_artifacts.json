@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-08-30",
+  "checkpoint": {
+    "path": "artifacts/checkpoints/dcn_long_schedule_seed43/best.pt",
+    "size_megabytes": 8.6,
+    "selected_epoch": 2
+  },
+  "generic_ranked_top50": {
+    "path": "artifacts/submissions/kuairand_pure_top50.csv",
+    "rows": 147262,
+    "users": 23713,
+    "columns": ["user_id", "video_id", "score", "rank"],
+    "sha256": "77895966589df9451447b865d76573f6a11508ed790ba16d458fb578a924086f",
+    "label_columns_read": []
+  },
+  "generic_all_scores": {
+    "path": "artifacts/submissions/kuairand_pure_scores.csv",
+    "rows": 147749,
+    "users": 23713,
+    "columns": ["user_id", "video_id", "score", "rank"],
+    "sha256": "34ab7099470713ccf6fe45848df52337fe1d8f20cd5d5dad72481fefe1d675a6",
+    "label_columns_read": []
+  },
+  "kuairand_1k_bonus_all_scores": {
+    "path": "artifacts/submissions/kuairand_1k_side_multitask_test_scores.csv",
+    "rows": 3328531,
+    "users": 490,
+    "columns": ["user_id", "video_id", "score", "rank"],
+    "sha256": "9e92d73a3184f5dae590928d6b50d684cce6f2f61d8536b4942da0531916709d",
+    "label_columns_read": []
+  },
+  "schema_status": "Generic ranked outputs are complete; apply the organizer column mapping when its missing schema is published."
+}

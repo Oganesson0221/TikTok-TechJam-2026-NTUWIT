@@ -1,0 +1,30 @@
+{
+  "data": {
+    "train_csv": "data/prepared/train.csv",
+    "validation_csv": "data/prepared/validation.csv",
+    "label_column": "is_click",
+    "user_column": "user_id",
+    "item_column": "video_id",
+    "categorical_features": ["user_id", "video_id"],
+    "temporal_features": false,
+    "negative_ratio": null
+  },
+  "model": {
+    "name": "mf",
+    "embedding_dim": 32,
+    "hidden_dims": [],
+    "dropout": 0.0
+  },
+  "training": {
+    "experiment_name": "mf_baseline",
+    "epochs": 30,
+    "batch_size": 4096,
+    "learning_rate": 0.001,
+    "weight_decay": 0.000001,
+    "patience": 4,
+    "min_delta": 0.00001,
+    "seed": 42,
+    "device": "auto",
+    "checkpoint_dir": "artifacts/checkpoints"
+  }
+}

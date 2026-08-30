@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="600" viewBox="0 0 1080 600" role="img" aria-labelledby="title desc">
+  <title id="title">KuaiRand-Pure validation NDCG at 10 progression</title>
+  <desc id="desc">Successful internal validation results progress from item popularity at 0.817216 to the selected DCN seed 43 at 0.837940. The axis starts at 0.80.</desc>
+  <rect width="1080" height="600" fill="#f5f3ed"/>
+  <rect x="40" y="40" width="1000" height="520" fill="#fffefa" stroke="#d8d5cc"/>
+  <text x="82" y="94" fill="#aa2d1d" font-family="system-ui, sans-serif" font-size="13" font-weight="700" letter-spacing="2">KUARAND-PURE · VALIDATION</text>
+  <text x="82" y="137" fill="#191917" font-family="Georgia, serif" font-size="34">NDCG@10 progression</text>
+  <text x="82" y="163" fill="#686861" font-family="system-ui, sans-serif" font-size="13">Successful runs · logged candidate impressions · axis begins at 0.80</text>
+  <g stroke="#dedbd2" stroke-width="1">
+    <line x1="330" y1="194" x2="330" y2="500"/><line x1="495" y1="194" x2="495" y2="500"/><line x1="660" y1="194" x2="660" y2="500"/><line x1="825" y1="194" x2="825" y2="500"/><line x1="990" y1="194" x2="990" y2="500"/>
+  </g>
+  <g fill="#686861" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">
+    <text x="330" y="526">0.80</text><text x="495" y="526">0.81</text><text x="660" y="526">0.82</text><text x="825" y="526">0.83</text><text x="990" y="526">0.84</text>
+  </g>
+  <g fill="#34342f" font-family="system-ui, sans-serif" font-size="13" text-anchor="end">
+    <text x="310" y="229">Item popularity</text><text x="310" y="281">Matrix factorization</text><text x="310" y="333">DeepFM · side features</text><text x="310" y="385">DeepFM · all exposures</text><text x="310" y="437">DCN · seed 42</text><text x="310" y="489" font-weight="700">DCN · seed 43</text>
+  </g>
+  <g>
+    <rect x="330" y="212" width="284" height="22" fill="#a9a69e"/><rect x="330" y="264" width="310" height="22" fill="#a9a69e"/><rect x="330" y="316" width="543" height="22" fill="#25344a"/><rect x="330" y="368" width="557" height="22" fill="#25344a"/><rect x="330" y="420" width="620" height="22" fill="#25344a"/><rect x="330" y="472" width="626" height="22" fill="#e34a32"/>
+  </g>
+  <g fill="#191917" font-family="ui-monospace, SFMono-Regular, monospace" font-size="12" font-weight="700">
+    <text x="624" y="228">0.817216</text><text x="650" y="280">0.818786</text><text x="883" y="332">0.832888</text><text x="897" y="384">0.833730</text><text x="960" y="436">0.837561</text><text x="966" y="488">0.837940</text>
+  </g>
+</svg>

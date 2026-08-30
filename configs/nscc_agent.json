@@ -1,0 +1,43 @@
+{
+  "max_experiments": 6,
+  "walltime_hours": 4.0,
+  "convergence_epsilon": 0.0001,
+  "convergence_patience": 3,
+  "max_retries": 2,
+  "log_dir": "artifacts/agent_run",
+  "candidates": [
+    {
+      "name": "mf_control",
+      "hypothesis": "ID-only matrix factorization establishes the cheapest personalized control.",
+      "config": "configs/nscc_mf_baseline.json"
+    },
+    {
+      "name": "deepfm_side_neg4",
+      "hypothesis": "Static user/video context and temporal features with second-order crosses improve click ranking.",
+      "config": "configs/nscc_deepfm_features.json"
+    },
+    {
+      "name": "dcn_side_neg4",
+      "hypothesis": "Explicit deep cross layers capture higher-order user-context-item interactions better than DeepFM.",
+      "config": "configs/nscc_dcn_features.json"
+    },
+    {
+      "name": "deepfm_side_all_negatives",
+      "hypothesis": "Keeping all logged negatives preserves calibration and may improve ranking versus 4-to-1 downsampling.",
+      "config": "configs/nscc_deepfm_features.json",
+      "overrides": ["data.negative_ratio=null"]
+    },
+    {
+      "name": "deepfm_embed32_neg4",
+      "hypothesis": "A wider embedding can represent high-cardinality interactions.",
+      "config": "configs/nscc_deepfm_features.json",
+      "overrides": ["model.embedding_dim=32"]
+    },
+    {
+      "name": "dcn_lr5e4",
+      "hypothesis": "A lower learning rate may stabilize the cross network.",
+      "config": "configs/nscc_dcn_features.json",
+      "overrides": ["training.learning_rate=0.0005"]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -q normal
+#PBS -l select=1:ncpus=16:ngpus=1:mem=110gb
+#PBS -l walltime=02:00:00
+#PBS -N kuairand-model
+#PBS -j oe
+
+set -euo pipefail
+
+cd "$PBS_O_WORKDIR"
+module purge
+module load pytorch/2.10.0-py3-cu12.6
+NSCC_PYTORCH_SITE=/app/apps/pytorch/2.10.0-py3-cu12.6/lib/python3.13/site-packages
+export PYTHONPATH="$PBS_O_WORKDIR/src:$NSCC_PYTORCH_SITE${PYTHONPATH:+:$PYTHONPATH}"
+TRAIN_CONFIG="${TRAIN_CONFIG:-configs/nscc_deepfm_features.json}"
+
+python -m research_rec.cli --config "$TRAIN_CONFIG" --set training.device=cuda

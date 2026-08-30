@@ -1,0 +1,35 @@
+{
+  "data": {
+    "train_csv": "data/bonus_1k/prepared/train.csv",
+    "validation_csv": "data/bonus_1k/prepared/validation.csv",
+    "label_column": "is_click",
+    "auxiliary_label_columns": ["long_view", "is_like", "is_follow"],
+    "user_column": "user_id",
+    "item_column": "video_id",
+    "categorical_features": ["user_id", "video_id", "tab"],
+    "temporal_features": true,
+    "negative_ratio": 4.0
+  },
+  "model": {
+    "name": "multitask_dcn",
+    "embedding_dim": 16,
+    "hidden_dims": [128, 64],
+    "dropout": 0.2,
+    "cross_layers": 3,
+    "auxiliary_loss_weight": 0.2
+  },
+  "training": {
+    "experiment_name": "kuairand_1k_multitask_dcn",
+    "epochs": 30,
+    "batch_size": 4096,
+    "learning_rate": 0.0005,
+    "weight_decay": 0.00001,
+    "patience": 5,
+    "min_delta": 0.00001,
+    "lr_scheduler_factor": 0.5,
+    "lr_scheduler_patience": 2,
+    "seed": 42,
+    "device": "auto",
+    "checkpoint_dir": "artifacts/checkpoints"
+  }
+}

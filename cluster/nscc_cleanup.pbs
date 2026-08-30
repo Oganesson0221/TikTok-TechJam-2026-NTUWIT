@@ -1,0 +1,24 @@
+#!/bin/bash
+#PBS -q normal
+#PBS -l select=1:ncpus=1:mem=1gb
+#PBS -l walltime=00:05:00
+#PBS -N kuairand-cleanup
+#PBS -j oe
+
+set -euo pipefail
+
+cd "$PBS_O_WORKDIR"
+CACHE_TARGET="$PBS_O_WORKDIR/.nscc/cache"
+case "$CACHE_TARGET" in
+  "$PBS_O_WORKDIR/.nscc/cache") ;;
+  *) echo "Refusing unexpected cleanup target: $CACHE_TARGET" >&2; exit 2 ;;
+esac
+
+if [[ -d "$CACHE_TARGET" ]]; then
+  du -sh "$CACHE_TARGET"
+  rm -rf "$CACHE_TARGET"
+  echo "Removed disposable partial container cache: $CACHE_TARGET"
+else
+  echo "No partial container cache present."
+fi
+

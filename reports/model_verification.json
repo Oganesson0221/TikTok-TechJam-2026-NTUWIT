@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-08-30",
+  "purpose": "Executable inference verification of the selected Pure and 1K checkpoints",
+  "pure": {
+    "checkpoint": "artifacts/checkpoints/dcn_long_schedule_seed43/best.pt",
+    "rows_scored_in_fresh_cpu_run": 2000,
+    "users": 328,
+    "scores_finite": true,
+    "scores_within_zero_and_one": true,
+    "descending_user_ranks_valid": true,
+    "score_standard_deviation": 0.2504447311684673,
+    "label_columns_read": [],
+    "output_sha256": "8a11de9c02faa2a14948772fe7d99b5103390bb8c1843743451d326c08789127"
+  },
+  "bonus_1k": {
+    "checkpoint": "artifacts/checkpoints/kuairand_1k_side_multitask/best.pt",
+    "exported_rows_checked": 3328531,
+    "users": 490,
+    "scores_finite": true,
+    "scores_within_zero_and_one": true,
+    "descending_user_ranks_valid": true,
+    "score_standard_deviation": 0.23038555051565593,
+    "label_columns_read": [],
+    "output_sha256": "9e92d73a3184f5dae590928d6b50d684cce6f2f61d8536b4942da0531916709d"
+  },
+  "personalization_check": {
+    "video_id": 5351,
+    "user_26540_score": 0.5166961,
+    "user_16967_score": 0.10877617,
+    "interpretation": "The same candidate receives materially different click scores under two learned user representations."
+  },
+  "interpretation": "Both selected checkpoints deserialize and produce non-constant valid click scores. Pure and 1K rows are correctly ordered within user. Offline NDCG and Recall provide ranking-quality evidence, not fake-video detection capability."
+}

@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-08-30",
+  "purpose": "real model-driven next-experiment selection over completed Pure and 1K history",
+  "execution_scope": "decision only; no training or hidden-test metrics supplied to the model",
+  "model": "gpt-5-mini",
+  "decision": {
+    "candidate_name": "dcn_long_schedule_seed44",
+    "rationale": "The long-schedule DCN seeds (42-43) produced the highest NDCG@10 (~0.8379); adding seed 44 is a bounded, controlled replication to estimate robustness and reduce selection-by-chance risk. It directly targets the top-performing configuration without introducing confounding changes to data or loss.",
+    "reflection": "If seed 44 matches prior results, we gain confidence in reproducibility; if it diverges, it reveals seed sensitivity requiring more seeds or aggregation.",
+    "source": "openai:gpt-5-mini"
+  },
+  "successful_request_usage": {
+    "input_tokens": 1513,
+    "output_tokens": 388,
+    "total_tokens": 1901,
+    "estimated_cost_usd": 0.00115425
+  },
+  "configured_limits": {
+    "max_output_tokens_per_successful_retry": 2400,
+    "max_total_tokens": 20000
+  },
+  "prior_incomplete_request": {
+    "occurred": true,
+    "cause": "1200-token output/reasoning ceiling truncated the structured JSON",
+    "maximum_output_tokens": 1200,
+    "conservative_total_cost_note": "Successful request plus the incomplete request cost far below USD 0.01 at published GPT-5 mini token rates."
+  },
+  "history_records": 12,
+  "candidate_names": [
+    "kuairand_1k_side_allneg",
+    "kuairand_1k_side_aux10",
+    "dcn_long_schedule_seed44"
+  ],
+  "training_result": {
+    "status": "completed",
+    "job_id": "15800366.pbs101",
+    "api_key_transmitted_to_nscc": false,
+    "epochs_completed": 12,
+    "ndcg@10": 0.837005595229586,
+    "recall@50": 0.9999063487047312,
+    "gpu_hours_from_pbs": 0.04,
+    "outcome": "Did not beat seed 43; retained as a third-seed robustness measurement."
+  }
+}

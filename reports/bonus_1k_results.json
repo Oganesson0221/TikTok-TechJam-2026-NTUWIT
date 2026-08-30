@@ -1,0 +1,126 @@
+{
+  "generated_at": "2026-08-30",
+  "dataset": "KuaiRand-1K",
+  "dataset_manifest": "artifacts/bonus_1k/data_manifest.json",
+  "evaluation_scope": "logged validation impressions from the prescribed standard-log row split",
+  "candidate_diagnostics": {
+    "evaluated_users": 511,
+    "median_candidates_per_user": 4682.0,
+    "p95_candidates_per_user": 17285.5,
+    "users_at_or_below_recall_50_fraction": 0.0
+  },
+  "experiments": [
+    {
+      "name": "kuairand_1k_multitask_aux20",
+      "ndcg@10": 0.6632441913293733,
+      "recall@50": 0.028800303167044076,
+      "epochs_completed": 6
+    },
+    {
+      "name": "kuairand_1k_multitask_allneg",
+      "ndcg@10": 0.6673906031660013,
+      "recall@50": 0.0290475290112427,
+      "epochs_completed": 6
+    },
+    {
+      "name": "kuairand_1k_multitask_aux10",
+      "ndcg@10": 0.6645519588157724,
+      "recall@50": 0.028785947068474455,
+      "epochs_completed": 6
+    },
+    {
+      "name": "kuairand_1k_side_multitask",
+      "ndcg@10": 0.6900041849290365,
+      "recall@50": 0.030152017973148596,
+      "epochs_completed": 6,
+      "automatic_recoveries": [
+        "batch_size 4096 to 2048 after CUDA BLAS initialization failure",
+        "batch_size 2048 to 1024 after CUDA BLAS initialization failure"
+      ]
+    }
+  ],
+  "winner": {
+    "name": "kuairand_1k_side_multitask",
+    "checkpoint": "artifacts/checkpoints/kuairand_1k_side_multitask/best.pt",
+    "checkpoint_sha256": "eeef415e913694f415d530a8a3418f95d1428334c792c117b5a858485a3671cf",
+    "checkpoint_size_megabytes": 597,
+    "epoch_ceiling": 30,
+    "epochs_completed": 6,
+    "effective_batch_size": 1024,
+    "ndcg@10": 0.6900041849290365,
+    "recall@50": 0.030152017973148596,
+    "improvement_over_best_id_context": {
+      "ndcg@10_absolute": 0.022613581763035184,
+      "ndcg@10_relative_percent": 3.388357830595723,
+      "recall@50_absolute": 0.001104488961905896,
+      "recall@50_relative_percent": 3.8023508350001345
+    }
+  },
+  "jobs": [
+    {
+      "job_id": "15798611.pbs101",
+      "purpose": "initial preparation; exposed official row-split timestamp overlap",
+      "exit_status": 1,
+      "walltime_seconds": 468,
+      "gpus": 0
+    },
+    {
+      "job_id": "15798799.pbs101",
+      "purpose": "corrected preparation recording rather than rejecting timestamp overlap",
+      "exit_status": 0,
+      "walltime_seconds": 47,
+      "gpus": 0
+    },
+    {
+      "job_id": "15798800.pbs101",
+      "purpose": "three-candidate multi-task sweep",
+      "exit_status": 0,
+      "walltime_seconds": 916,
+      "gpus": 1,
+      "gpu_hours": 0.2544444444444444
+    },
+    {
+      "job_id": "15798882.pbs101",
+      "purpose": "side-feature multi-task model with automatic recovery",
+      "exit_status": 0,
+      "walltime_seconds": 594,
+      "gpus": 1,
+      "gpu_hours": 0.165
+    }
+  ],
+  "total_bonus_training_gpu_hours_from_pbs": 0.4194444444444444,
+  "manual_training_interventions": 0,
+  "manual_data_integration_interventions": 1,
+  "manual_export_integration_interventions": 1,
+  "experiment_controller_llm_tokens": {
+    "input": 0,
+    "output": 0,
+    "note": "These reproducible NSCC bonus runs used the queued policy; the implemented OpenAI policy was not executed without credentials."
+  },
+  "submission_export": {
+    "path": "artifacts/submissions/kuairand_1k_side_multitask_test_scores.csv",
+    "rows": 3328531,
+    "users": 490,
+    "columns": ["user_id", "video_id", "score", "rank"],
+    "sha256": "9e92d73a3184f5dae590928d6b50d684cce6f2f61d8536b4942da0531916709d",
+    "label_columns_read": [],
+    "successful_job_id": "15799961.pbs101",
+    "successful_job_walltime_seconds": 41,
+    "failed_attempts": [
+      {
+        "job_id": "15799858.pbs101",
+        "walltime_seconds": 47,
+        "cause": "CUDA BLAS initialization failure at inference batch_size 16384"
+      },
+      {
+        "job_id": "15799859.pbs101",
+        "walltime_seconds": 36,
+        "cause": "duplicate in-flight submission with the same oversized batch"
+      }
+    ],
+    "final_batch_size": 1024,
+    "total_export_gpu_hours_from_pbs": 0.034444444444444444,
+    "status": "completed"
+  },
+  "warning": "These are reproducible local-protocol bonus results, not an official leaderboard score."
+}

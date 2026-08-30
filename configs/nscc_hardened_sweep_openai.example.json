@@ -1,0 +1,37 @@
+{
+  "max_experiments": 6,
+  "walltime_hours": 2.0,
+  "convergence_epsilon": 0.0001,
+  "convergence_patience": 5,
+  "max_retries": 2,
+  "log_dir": "artifacts/hardened_sweep_openai",
+  "decision_mode": "openai",
+  "decision_model": "gpt-5-mini",
+  "decision_max_output_tokens": 1200,
+  "decision_max_total_tokens": 20000,
+  "candidates": [
+    {
+      "name": "multitask_dcn_aux20",
+      "hypothesis": "Joint click and engagement feedback may improve the shared ranking representation.",
+      "config": "configs/nscc_multitask_dcn.json"
+    },
+    {
+      "name": "multitask_dcn_aux10",
+      "hypothesis": "Reduce auxiliary transfer strength if click validation is harmed.",
+      "config": "configs/nscc_multitask_dcn.json",
+      "overrides": ["model.auxiliary_loss_weight=0.1"]
+    },
+    {
+      "name": "multitask_dcn_all_negatives",
+      "hypothesis": "Preserve all logged exposure negatives for calibration.",
+      "config": "configs/nscc_multitask_dcn.json",
+      "overrides": ["data.negative_ratio=null"]
+    },
+    {
+      "name": "dcn_long_schedule_seed42",
+      "hypothesis": "Test longer scheduled single-task training with validation-best restoration.",
+      "config": "configs/nscc_dcn_features.json",
+      "overrides": ["training.batch_size=1024", "training.learning_rate=0.0005", "training.epochs=80", "training.patience=10", "training.lr_scheduler_factor=0.5"]
+    }
+  ]
+}

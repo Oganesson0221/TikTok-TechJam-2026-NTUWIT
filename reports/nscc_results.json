@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-08-30",
+  "cluster": "NSCC ASPIRE2A",
+  "project": "personal-rishika0",
+  "hardware": "NVIDIA A100-SXM4-40GB",
+  "software": {
+    "pytorch": "2.10.0+cu126",
+    "numpy": "2.2.4",
+    "pandas": "2.2.3"
+  },
+  "evaluation_warning": "Logged-impression scores are not official until checked with the organizer evaluation script.",
+  "jobs": [
+    {
+      "job_id": "15797658.pbs101",
+      "purpose": "scheduled environment verification",
+      "exit_status": 0,
+      "gpu_hours": 0.0
+    },
+    {
+      "job_id": "15797659.pbs101",
+      "purpose": "six-candidate autonomous sweep",
+      "exit_status": 0,
+      "walltime_seconds": 270,
+      "gpu_hours": 0.075
+    },
+    {
+      "job_id": "15797816.pbs101",
+      "purpose": "automatic DCN CUDA recovery retry",
+      "exit_status": 0,
+      "walltime_seconds": 79,
+      "gpu_hours": 0.021944444444444444
+    },
+    {
+      "job_id": "15797872.pbs101",
+      "purpose": "scheduled removal of 1.4 GB disposable partial container cache",
+      "exit_status": 0,
+      "gpu_hours": 0.0
+    },
+    {
+      "job_id": "15797944.pbs101",
+      "purpose": "five-candidate final targeted sweep",
+      "exit_status": 0,
+      "walltime_seconds": 309,
+      "gpu_hours": 0.08583333333333333
+    },
+    {
+      "job_id": "15798519.pbs101",
+      "purpose": "six-candidate hardened multi-task and long-schedule sweep",
+      "exit_status": 0,
+      "walltime_seconds": 650,
+      "gpu_hours": 0.18055555555555555
+    },
+    {
+      "job_id": "15798659.pbs101",
+      "purpose": "four-candidate pairwise and hybrid objective sweep",
+      "exit_status": 0,
+      "walltime_seconds": 588,
+      "gpu_hours": 0.16333333333333333
+    },
+    {
+      "job_id": "15800366.pbs101",
+      "purpose": "OpenAI-selected seed-44 robustness replication",
+      "exit_status": 0,
+      "walltime_seconds": 144,
+      "gpu_hours": 0.04
+    }
+  ],
+  "total_primary_gpu_hours_from_pbs": 0.5666666666666667,
+  "estimated_primary_gpu_service_units_at_64_su_per_hour": 36.266666666666666,
+  "manual_model_training_interventions": 0,
+  "manual_integration_interventions": 2,
+  "manual_interventions_total": 2,
+  "experiment_agent_llm_tokens": {
+    "successful_request_input": 1513,
+    "successful_request_output": 388,
+    "successful_request_estimated_cost_usd": 0.00115425,
+    "note": "A local GPT-5 mini policy read 12 completed records and selected seed 44. One earlier 1200-token request returned incomplete JSON; total API cost remained below USD 0.01. Training ran on NSCC without transmitting the API key."
+  },
+  "best_experiment": {
+    "name": "dcn_long_schedule_seed43",
+    "model": "dcn",
+    "effective_batch_size": 1024,
+    "learning_rate": 0.0005,
+    "seed": 43,
+    "epoch_ceiling": 80,
+    "epochs_completed": 12,
+    "best_epoch": 2,
+    "ndcg@10": 0.8379399733405782,
+    "recall@50": 0.999918155285595,
+    "loss": 0.5835960903116603,
+    "selection_score": 0.9189290643130866,
+    "checkpoint": "artifacts/checkpoints/dcn_long_schedule_seed43/best.pt",
+    "note": "Selected by validation score; early stopping restored epoch 2 weights. Seed 44 was selected by the OpenAI policy for a third robustness replication and did not displace the winner."
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "selected_by": "highest validation selection score",
+  "experiment": "dcn_long_schedule_seed43",
+  "architecture": "dcn",
+  "config": "configs/nscc_dcn_features.json",
+  "overrides": {
+    "training.batch_size": 1024,
+    "training.learning_rate": 0.0005,
+    "training.epochs": 80,
+    "training.patience": 10,
+    "training.lr_scheduler_factor": 0.5,
+    "training.lr_scheduler_patience": 2,
+    "training.seed": 43
+  },
+  "epochs_completed": 12,
+  "best_epoch": 2,
+  "metrics": {
+    "ndcg@10": 0.8379399733405782,
+    "recall@50": 0.999918155285595,
+    "loss": 0.5835960903116603,
+    "selection_score": 0.9189290643130866
+  },
+  "internal_popularity_control_delta": {
+    "ndcg@10_absolute": 0.020723680252212495,
+    "ndcg@10_relative_percent": 2.5358868181512895,
+    "recall@50_absolute": 0.0000511876333985084,
+    "equal_weight_mean_absolute_delta": 0.010387433942805502,
+    "warning": "This is not the missing official CWM baseline delta."
+  },
+  "three_seed_diagnostic": {
+    "seeds": [42, 43, 44],
+    "mean_ndcg@10": 0.8375022675927184,
+    "mean_recall@50": 0.999909650648399,
+    "ndcg@10_range": 0.0009343781109922844,
+    "seed_44_selected_by": "real GPT-5 mini policy decision over completed experiment history"
+  },
+  "checkpoint": "artifacts/checkpoints/dcn_long_schedule_seed43/best.pt",
+  "evaluation_scope": "KuaiRand-Pure logged validation impressions",
+  "warning": "Run the organizer evaluator before making an official leaderboard claim."
+}

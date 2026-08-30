@@ -1,0 +1,46 @@
+{
+  "max_experiments": 6,
+  "walltime_hours": 2.0,
+  "convergence_epsilon": 0.0001,
+  "convergence_patience": 5,
+  "max_retries": 2,
+  "log_dir": "artifacts/hardened_sweep",
+  "decision_mode": "queued",
+  "candidates": [
+    {
+      "name": "multitask_dcn_aux20",
+      "hypothesis": "A shared DCN trained jointly on click, long-view, like, and follow feedback should learn a richer user-interest representation.",
+      "config": "configs/nscc_multitask_dcn.json"
+    },
+    {
+      "name": "multitask_dcn_aux10",
+      "hypothesis": "A smaller auxiliary weight may preserve useful representation transfer while keeping click dominant.",
+      "config": "configs/nscc_multitask_dcn.json",
+      "overrides": ["model.auxiliary_loss_weight=0.1"]
+    },
+    {
+      "name": "multitask_dcn_aux35",
+      "hypothesis": "A larger auxiliary contribution tests whether sparse high-intent feedback adds ranking signal.",
+      "config": "configs/nscc_multitask_dcn.json",
+      "overrides": ["model.auxiliary_loss_weight=0.35"]
+    },
+    {
+      "name": "multitask_dcn_all_negatives",
+      "hypothesis": "Keeping all logged negative exposures may improve multi-task calibration.",
+      "config": "configs/nscc_multitask_dcn.json",
+      "overrides": ["data.negative_ratio=null"]
+    },
+    {
+      "name": "dcn_long_schedule_seed42",
+      "hypothesis": "An 80-epoch cap with plateau scheduling tests longer training safely while validation checkpointing prevents overfit selection.",
+      "config": "configs/nscc_dcn_features.json",
+      "overrides": ["training.batch_size=1024", "training.learning_rate=0.0005", "training.epochs=80", "training.patience=10", "training.lr_scheduler_factor=0.5", "training.lr_scheduler_patience=2"]
+    },
+    {
+      "name": "dcn_long_schedule_seed43",
+      "hypothesis": "A second seed measures whether the best single-task configuration is robust rather than a lucky initialization.",
+      "config": "configs/nscc_dcn_features.json",
+      "overrides": ["training.batch_size=1024", "training.learning_rate=0.0005", "training.epochs=80", "training.patience=10", "training.lr_scheduler_factor=0.5", "training.lr_scheduler_patience=2", "training.seed=43"]
+    }
+  ]
+}

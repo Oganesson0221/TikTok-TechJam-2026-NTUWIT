@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-08-30",
+  "dataset": "KuaiRand-Pure",
+  "split_manifest": "data/prepared/manifest.json",
+  "warning": "Scores are not official until checked against the organizer evaluation script.",
+  "item_popularity": {
+    "protocol": "logged_validation_impressions",
+    "ndcg@10": 0.8172162930883657,
+    "recall@50": 0.9998669676521965,
+    "full_catalog_ndcg@10": 0.002784789045836044,
+    "full_catalog_recall@50": 0.02121557486541768,
+    "full_catalog_items": 7583,
+    "elapsed_seconds": 1.7184574170096312,
+    "hardware": "Apple M2 CPU"
+  },
+  "matrix_factorization": {
+    "protocol": "logged_validation_impressions",
+    "ndcg@10": 0.8187862942577824,
+    "recall@50": 0.9998778660345322,
+    "best_epoch": 5,
+    "epochs_completed": 9,
+    "early_stopped": true,
+    "elapsed_seconds": 97.56467104199692,
+    "hardware": "Apple M2 MPS",
+    "checkpoint": "artifacts/checkpoints/mf_baseline/best.pt"
+  }
+}

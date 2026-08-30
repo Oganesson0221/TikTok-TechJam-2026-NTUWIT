@@ -1,0 +1,40 @@
+data:
+  train_csv: data/prepared/train.csv
+  validation_csv: data/prepared/validation.csv
+  user_features_csv: data/prepared/user_features_pure.csv
+  item_features_csv: data/prepared/video_features_basic_pure.csv
+  label_column: is_click
+  user_column: user_id
+  item_column: video_id
+  categorical_features:
+    - user_id
+    - video_id
+    - tab
+    - user_active_degree
+    - follow_user_num_range
+    - fans_user_num_range
+    - friend_user_num_range
+    - register_days_range
+    - video_type
+    - upload_type
+    - author_id
+    - music_type
+  temporal_features: true
+  negative_ratio: 4.0
+model:
+  name: dcn
+  embedding_dim: 16
+  hidden_dims: [128, 64]
+  dropout: 0.15
+  cross_layers: 3
+training:
+  experiment_name: dcn_features_neg4
+  epochs: 40
+  batch_size: 2048
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  patience: 5
+  min_delta: 0.00001
+  seed: 42
+  device: auto
+  checkpoint_dir: artifacts/checkpoints

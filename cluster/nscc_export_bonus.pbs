@@ -1,0 +1,35 @@
+#!/bin/bash
+#PBS -q normal
+#PBS -l select=1:ncpus=16:ngpus=1:mem=110gb
+#PBS -l walltime=01:00:00
+#PBS -N kuairand-export
+#PBS -j oe
+
+set -euo pipefail
+
+cd "$PBS_O_WORKDIR"
+module purge
+module load pytorch/2.10.0-py3-cu12.6
+NSCC_PYTORCH_SITE=/app/apps/pytorch/2.10.0-py3-cu12.6/lib/python3.13/site-packages
+export PYTHONPATH="$PBS_O_WORKDIR/src:$NSCC_PYTORCH_SITE${PYTHONPATH:+:$PYTHONPATH}"
+
+if [[ -z "${EXPERIMENT_NAME:-}" || ! "$EXPERIMENT_NAME" =~ ^kuairand_1k_[A-Za-z0-9_-]+$ ]]; then
+  echo "EXPERIMENT_NAME must be a validated kuairand_1k_* name." >&2
+  exit 2
+fi
+
+CHECKPOINT="artifacts/checkpoints/$EXPERIMENT_NAME/best.pt"
+INPUT_CSV="data/bonus_1k/prepared/test.csv"
+OUTPUT_CSV="artifacts/submissions/${EXPERIMENT_NAME}_test_scores.csv"
+
+test -f "$CHECKPOINT"
+test -f "$INPUT_CSV"
+echo "PBS job: ${PBS_JOBID:-unknown}"
+echo "Exporting held-out scores for $EXPERIMENT_NAME"
+
+python -m research_rec.predict_cli \
+  --checkpoint "$CHECKPOINT" \
+  --input-csv "$INPUT_CSV" \
+  --output-csv "$OUTPUT_CSV" \
+  --batch-size 1024 \
+  --device cuda

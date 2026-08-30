@@ -1,0 +1,40 @@
+{
+  "max_experiments": 5,
+  "walltime_hours": 1.0,
+  "convergence_epsilon": 0.0001,
+  "convergence_patience": 4,
+  "max_retries": 2,
+  "log_dir": "artifacts/final_sweep",
+  "candidates": [
+    {
+      "name": "dcn_lr5e4_batch1024",
+      "hypothesis": "A lower learning rate should slow the epoch-one overfitting seen in the recovered DCN.",
+      "config": "configs/nscc_dcn_features.json",
+      "overrides": ["training.batch_size=1024", "training.learning_rate=0.0005"]
+    },
+    {
+      "name": "dcn_lr2e4_batch1024",
+      "hypothesis": "A still lower learning rate may improve the first-epoch optimum without changing capacity.",
+      "config": "configs/nscc_dcn_features.json",
+      "overrides": ["training.batch_size=1024", "training.learning_rate=0.0002"]
+    },
+    {
+      "name": "dcn_regularized",
+      "hypothesis": "Higher dropout and weight decay should reduce the rapid validation degradation after epoch one.",
+      "config": "configs/nscc_dcn_features.json",
+      "overrides": ["training.batch_size=1024", "model.dropout=0.3", "training.weight_decay=0.0001"]
+    },
+    {
+      "name": "dcn_plateau_scheduler",
+      "hypothesis": "Reducing learning rate on a validation plateau can search beyond the initial optimum without blind extra epochs.",
+      "config": "configs/nscc_dcn_features.json",
+      "overrides": ["training.batch_size=1024", "training.patience=8", "training.lr_scheduler_factor=0.5", "training.lr_scheduler_patience=1"]
+    },
+    {
+      "name": "deepfm_allneg_lr5e4",
+      "hypothesis": "Lower learning rate plus the better all-negative sampling policy may improve the strongest DeepFM control.",
+      "config": "configs/nscc_deepfm_features.json",
+      "overrides": ["data.negative_ratio=null", "training.learning_rate=0.0005"]
+    }
+  ]
+}

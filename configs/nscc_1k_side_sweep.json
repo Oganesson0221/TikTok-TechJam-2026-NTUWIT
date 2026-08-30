@@ -1,0 +1,16 @@
+{
+  "max_experiments": 1,
+  "walltime_hours": 3.0,
+  "convergence_epsilon": 0.0001,
+  "convergence_patience": 1,
+  "max_retries": 2,
+  "log_dir": "artifacts/bonus_1k_side_sweep",
+  "decision_mode": "queued",
+  "candidates": [
+    {
+      "name": "kuairand_1k_side_multitask",
+      "hypothesis": "Static author and video attributes should generalize click ranking to validation videos whose IDs were unseen in training.",
+      "config": "configs/nscc_1k_side_multitask_dcn.json"
+    }
+  ]
+}

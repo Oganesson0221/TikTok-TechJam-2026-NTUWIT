@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -q normal
+#PBS -l select=1:ncpus=4:mem=16gb
+#PBS -l walltime=01:00:00
+#PBS -N kuairand-bootstrap
+#PBS -j oe
+
+set -euo pipefail
+
+cd "$PBS_O_WORKDIR"
+module purge
+module load pytorch/2.10.0-py3-cu12.6
+NSCC_PYTORCH_SITE=/app/apps/pytorch/2.10.0-py3-cu12.6/lib/python3.13/site-packages
+export PYTHONPATH="$PBS_O_WORKDIR/src:$NSCC_PYTORCH_SITE${PYTHONPATH:+:$PYTHONPATH}"
+
+python - <<'PY'
+import numpy
+import pandas
+import torch
+import research_rec
+
+print("numpy", numpy.__version__)
+print("pandas", pandas.__version__)
+print("torch", torch.__version__)
+print("research_rec", research_rec.__file__)
+PY
+echo "NSCC native PyTorch environment is ready."
