@@ -329,7 +329,7 @@ scripts/nscc_submit.sh bonus-side-sweep
 scripts/nscc_submit.sh bonus-export kuairand_1k_side_multitask
 ```
 
-## Integration boundary
+## contribution integration
 
 The Member 1 data preparation and baseline implementation are included here.
 Exact official metric parity remains pending the organizer's evaluator and
