@@ -8,7 +8,7 @@ experiment controller.
 Submission materials: [`docs/devpost.md`](docs/devpost.md),
 [`docs/demo_script.md`](docs/demo_script.md),
 [`docs/pitch_deck.md`](docs/pitch_deck.md), and
-[`docs/submission_output.md`](docs/submission_output.md). Final human submission
+[`docs/submission_output.md`](docs/submission_output.md). Final submission
 steps are tracked in [`docs/submission_checklist.md`](docs/submission_checklist.md).
 The interactive research console and exact product-scope explanation are in
 [`docs/frontend.md`](docs/frontend.md). Checkpoint locations, checksums and the
@@ -24,7 +24,7 @@ recommended sharing workflow are in
   values never leak into feature fitting.
 - Optional static user/video feature joins and temporal features (`hour`, day of
   week, weekend).
-- Reproducible downsampling of *observed non-clicked impressions*. No unexposed
+- Reproducible downsampling of _observed non-clicked impressions_. No unexposed
   user-item pairs or external data are introduced.
 - Pointwise BCE, within-user BPR, and hybrid ranking/calibration objectives;
   pairwise negatives are drawn only from each user's logged exposures.
@@ -196,13 +196,13 @@ schema.
 The checked-in summary is in `reports/baseline_results.json`. On an 8 GB Apple
 M2 MacBook Air:
 
-| Model | Protocol | NDCG@10 | Recall@50 | Runtime |
-|---|---|---:|---:|---:|
-| Item popularity | Logged impressions | 0.817216 | 0.999867 | 1.7 s |
-| Item popularity | Full 7,583-item catalog | 0.002785 | 0.021216 | 1.7 s |
-| Matrix factorization | Logged impressions | 0.818786 | 0.999878 | 97.6 s |
-| DeepFM, all logged negatives (A100) | Logged impressions | 0.833730 | 0.999921 | 58.8 s |
-| DCN, long-schedule seed 43 (A100) | Logged impressions | **0.837940** | 0.999918 | 101.9 s |
+| Model                               | Protocol                |      NDCG@10 | Recall@50 | Runtime |
+| ----------------------------------- | ----------------------- | -----------: | --------: | ------: |
+| Item popularity                     | Logged impressions      |     0.817216 |  0.999867 |   1.7 s |
+| Item popularity                     | Full 7,583-item catalog |     0.002785 |  0.021216 |   1.7 s |
+| Matrix factorization                | Logged impressions      |     0.818786 |  0.999878 |  97.6 s |
+| DeepFM, all logged negatives (A100) | Logged impressions      |     0.833730 |  0.999921 |  58.8 s |
+| DCN, long-schedule seed 43 (A100)   | Logged impressions      | **0.837940** |  0.999918 | 101.9 s |
 
 ![Logged-impression validation NDCG comparison](docs/assets/results.svg)
 
