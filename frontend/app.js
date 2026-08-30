@@ -44,17 +44,42 @@ const colors = { control: "#a9a69e", candidate: "#25344a", winner: "#e34a32" };
 
 const personas = {
   "26469": {
-    profile: "Full-active · video author · long tenure",
-    behavior: "Top score 0.771 across 160 candidates"
+    activity: "Full-active · video author · 1,261-day account",
+    social: "Follows 97 · 35 followers · 7 friends",
+    candidates: 160,
+    pattern: "Native movie and web uploads lead this candidate set"
   },
   "26540": {
-    profile: "Full-active · video author · established audience",
-    behavior: "Top score 0.557 across 128 candidates"
+    activity: "Full-active · video author · 2,031-day account",
+    social: "Follows 26 · 210 followers · 25 friends",
+    candidates: 128,
+    pattern: "A mix of short, native movie and imported uploads ranks highest"
   },
   "16967": {
-    profile: "High-active · viewer account · mid tenure",
-    behavior: "Top score 0.125 across 82 candidates"
+    activity: "High-active · viewer account · 148-day account",
+    social: "Follows 124 · 39 followers · 1 friend",
+    candidates: 82,
+    pattern: "A 40-second native movie upload leads a lower-score candidate set"
   }
+};
+
+const videoContexts = {
+  3131: ["Kmovie", 93, "9", 5104614], 3797: ["Web", 168, "39 · 43", 6478743],
+  5963: ["Kmovie", 109, "20 · 43", 7689727], 5137: ["Web", 192, "39", 308095],
+  832: ["LongImport", 146, "39 · 43", 8378922], 584: ["Web", 120, "39", 6628506],
+  4741: ["LongImport", 38, "9", 8346425], 4661: ["Web", 95, "unlisted", 7615841],
+  3984: ["LongImport", 27, "1", 6664891], 444: ["Kmovie", 89, "9", 7336639],
+  5351: ["ShortImport", 15, "4", 6442540], 4278: ["ShortImport", 13, "9", 169266],
+  4486: ["ShareFromOtherApp", 73, "39 · 68", 7331709], 1176: ["LongImport", 86, "28", 6210990],
+  277: ["LongImport", 76, "39", 6397260], 5675: ["LongImport", 177, "11", 3223670],
+  6989: ["Kmovie", 40, "9", 5230385], 5931: ["LongImport", 128, "17", 7517655],
+  7287: ["LongImport", 216, "3", 34042], 4927: ["ShortImport", 11, "8", 6924378],
+  7299: ["LongImport", 42, "20", 5254782], 961: ["LongImport", 86, "39", 1950444]
+};
+
+const uploadLabels = {
+  Kmovie: "Native movie upload", Web: "Web upload", LongImport: "Long-form import",
+  ShortImport: "Short-form import", ShareFromOtherApp: "Shared from another app"
 };
 
 function activateTab(name, updateHash = true) {
@@ -108,26 +133,43 @@ function drawChart() {
   svg.innerHTML = parts.join("");
 }
 
-function renderRanking(rows) {
+function rankingReason(row, rows, candidateCount) {
+  const topScore = Number(rows[0].score);
+  if (Number(row.rank) === 1) {
+    const lead = rows.length > 1 ? topScore - Number(rows[1].score) : 0;
+    return `Highest learned click fit among ${candidateCount} candidates; leads the next item by ${lead.toFixed(3)}.`;
+  }
+  const gap = topScore - Number(row.score);
+  if (Number(row.rank) <= 3) return `Top-three relative fit, ${gap.toFixed(3)} below this persona's leading score.`;
+  return `Positive candidate fit, but ${gap.toFixed(3)} below the leader after user, video and context interactions.`;
+}
+
+function renderRanking(rows, userId) {
   const body = document.querySelector("#ranking-body");
+  const candidateCount = personas[userId]?.candidates || rows.length;
   body.innerHTML = rows.slice(0, 8).map((row) => `
     <tr>
       <td><strong>${String(row.rank).padStart(2, "0")}</strong></td>
       <td>${row.video_id}</td>
-      <td>${Number(row.score).toFixed(6)}</td>
-      <td><div class="score-track" aria-label="${(Number(row.score) * 100).toFixed(1)} percent"><span style="width:${Number(row.score) * 100}%"></span></div></td>
+      <td>${(() => { const context = videoContexts[row.video_id] || ["Unknown", "—", "—", "—"]; return `<span class="video-context"><strong>${uploadLabels[context[0]] || context[0]}</strong><small>${context[1]}s · taxonomy ${context[2]} · author ${context[3]}</small></span>`; })()}</td>
+      <td><strong>${Number(row.score).toFixed(6)}</strong><div class="score-track" aria-label="${(Number(row.score) * 100).toFixed(1)} percent"><span style="width:${Number(row.score) * 100}%"></span></div></td>
+      <td><span class="ranking-reason">${rankingReason(row, rows, candidateCount)}</span></td>
     </tr>`).join("");
 }
 
 function renderPersonaEvidence(userId, rows) {
   const profile = personas[userId] || {
-    profile: "Anonymized KuaiRand user representation",
-    behavior: `${rows.length} top-ranked candidates shown`
+    activity: "Anonymized KuaiRand user representation",
+    social: "Structured social ranges available to the model",
+    candidates: rows.length,
+    pattern: "Highest-scoring candidates shown in descending order"
   };
   document.querySelector("#persona-evidence").innerHTML = `
-    <div><span>Profile signal</span><strong>${profile.profile}</strong></div>
-    <div><span>Ranking behavior</span><strong>${profile.behavior}</strong></div>
-    <p>The model combines this user's learned representation with candidate and context features. This is ranking evidence—not an explanation of the person's real preferences.</p>`;
+    <div><span>Activity context</span><strong>${profile.activity}</strong></div>
+    <div><span>Social context</span><strong>${profile.social}</strong></div>
+    <div><span>Candidate context</span><strong>${profile.candidates} exposed videos · top score ${Number(rows[0]?.score || 0).toFixed(3)}</strong></div>
+    <div><span>Observed ranking pattern</span><strong>${profile.pattern}</strong></div>
+    <p>The explanation describes supplied metadata and relative score position. Numeric taxonomy tags are anonymized KuaiRand categories. It does not claim a causal reason or infer the person's real preferences.</p>`;
   document.querySelectorAll("[data-persona]").forEach((card) => card.classList.toggle("is-selected", card.dataset.persona === userId));
 }
 
@@ -138,12 +180,12 @@ async function loadRanking() {
     const response = await fetch(`/api/rank?user_id=${encodeURIComponent(userId)}&limit=8`);
     if (!response.ok) throw new Error("API unavailable");
     const payload = await response.json();
-    renderRanking(payload.rows);
+    renderRanking(payload.rows, userId);
     renderPersonaEvidence(userId, payload.rows);
     status.textContent = "Live checkpoint export";
   } catch {
     const rows = fallbackRankings[userId] || fallbackRankings["26469"];
-    renderRanking(rows);
+    renderRanking(rows, userId);
     renderPersonaEvidence(userId, rows);
     status.textContent = userId === "26469" ? "Local verified sample" : "Start demo server for this user";
   }

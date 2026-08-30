@@ -117,14 +117,16 @@
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Rank</th><th>Video ID</th><th>Click score</th><th>Relative confidence</th></tr></thead>
+            <thead><tr><th>Rank</th><th>Video</th><th>Content context</th><th>Click score</th><th>Why this position</th></tr></thead>
             <tbody id="ranking-body"></tbody>
           </table>
         </div>
         <div class="persona-evidence" id="persona-evidence" aria-live="polite">
-          <div><span>Profile signal</span><strong>Full-active · video author · long tenure</strong></div>
-          <div><span>Ranking behavior</span><strong>Top score 0.771 across 160 candidates</strong></div>
-          <p>The model combines this user's learned representation with candidate and context features. This is ranking evidence—not an explanation of the person's real preferences.</p>
+          <div><span>Activity context</span><strong>Full-active · video author · 1,261-day account</strong></div>
+          <div><span>Social context</span><strong>Follows 97 · 35 followers · 7 friends</strong></div>
+          <div><span>Candidate context</span><strong>160 exposed videos · top score 0.771</strong></div>
+          <div><span>Observed ranking pattern</span><strong>Native movie and web uploads lead this candidate set</strong></div>
+          <p>The explanation describes supplied metadata and relative score position. It does not claim a causal reason or infer the person's real preferences.</p>
         </div>
         <div class="verification-strip" aria-label="Model verification evidence">
           <div><span>✓</span><p><strong>Valid probabilities</strong>All checked scores are finite and within 0–1.</p></div>

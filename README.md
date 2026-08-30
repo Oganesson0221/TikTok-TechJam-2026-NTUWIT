@@ -253,16 +253,54 @@ inside a clean virtual environment.
 ## Frontend demo
 
 This system ranks candidate videos by predicted click likelihood; it is not a
-fake-video detector. Start the professional frontend with its real exported
-ranking API:
+fake-video detector. The frontend includes three fictional personas backed by
+anonymized KuaiRand users, real ranked candidates, content metadata,
+relative-position explanations, the experiment workflow, and successful-result
+graphs.
+
+### Full local demo with the ranking API
+
+From the repository root, install the package and start the server:
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
 serve-research-console --port 8080
 ```
 
-Open `http://127.0.0.1:8080` to explore fictional personas mapped to anonymized
-KuaiRand users, inspect actual ranked candidates, review model inputs/outputs,
-and see the successful-results graph. The static files are under `frontend/`.
+Then open [http://127.0.0.1:8080](http://127.0.0.1:8080). The server reads
+`artifacts/submissions/kuairand_pure_scores.csv` and exposes:
+
+```text
+GET /api/health
+GET /api/sample-users
+GET /api/rank?user_id=26469&limit=8
+```
+
+If the console script is not installed, the equivalent development command is:
+
+```bash
+PYTHONPATH=src python -m research_rec.demo_server --port 8080
+```
+
+### Static-only demo
+
+The static frontend does not need PyTorch, a checkpoint, or an API key. It uses
+embedded examples copied from the verified prediction export:
+
+```bash
+python -m http.server 8080 --directory .
+```
+
+Open [http://127.0.0.1:8080/frontend/](http://127.0.0.1:8080/frontend/).
+Persona selection, explanations, navigation and graphs continue to work; users
+outside the three embedded personas require the full local server.
+
+This static mode is suitable for Vercel. It demonstrates verified model output
+but does not claim that Vercel is executing the local PyTorch checkpoints. See
+[`docs/frontend.md`](docs/frontend.md) for the complete interface and model-
+scope contract.
 
 ## NSCC A100 execution
 

@@ -27,6 +27,14 @@ Their activity/creator descriptors use supplied structured attributes and their
 tables use actual exported model scores. Names are presentation aliases only;
 the UI does not infer real identity or private preferences.
 
+Each ranked row now includes its available content context—upload source,
+duration, anonymized taxonomy tags and author ID—plus a relative-position
+explanation. For example, the first item is identified as the highest learned
+click fit in that persona's candidate set, while later items state their score
+gap from the leader. These are faithful descriptions of metadata and ranking
+position, not causal feature attributions: DCN feature interactions do not
+provide a human-readable reason for an individual's true preference.
+
 ## Run it
 
 Install the package, then start the local server from the repository root:
