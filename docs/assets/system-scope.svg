@@ -12,7 +12,7 @@
     <text x="330" y="189" fill="#e34a32" font-family="Georgia, serif" font-size="34">→</text>
     <rect x="385" y="92" width="310" height="176" fill="#25344a"/>
     <text x="425" y="131" fill="#f8dfd8" font-size="11" font-weight="700" letter-spacing="1.5">DCN RANKER</text>
-    <text x="425" y="181" fill="#ffffff" font-family="Georgia, serif" font-size="27">P(click | user, item, context)</text>
+    <text x="425" y="181" fill="#ffffff" font-family="Georgia, serif" font-size="25">ClickScore(user, item, context)</text>
     <text x="425" y="220" fill="#bdc4ce" font-size="13">Embeddings · crosses · deep tower</text>
     <text x="735" y="189" fill="#e34a32" font-family="Georgia, serif" font-size="34">→</text>
     <rect x="790" y="55" width="250" height="250" fill="#191917"/>

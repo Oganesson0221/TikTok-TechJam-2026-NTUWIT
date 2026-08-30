@@ -22,7 +22,7 @@ Default CSV schema:
 |---|---|
 | `user_id` | KuaiRand user identifier |
 | `video_id` | candidate video identifier |
-| `score` | predicted click probability |
+| `score` | bounded click-propensity score used for ranking; not asserted to be calibrated |
 | `rank` | one-based descending rank within the user |
 
 Use `--top-k 50` for a ranked top-50 file, `--columns` to omit unneeded fields,

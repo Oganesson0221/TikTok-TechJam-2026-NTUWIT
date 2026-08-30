@@ -2,8 +2,16 @@
   "generated_at": "2026-08-30",
   "checkpoint": {
     "path": "artifacts/checkpoints/dcn_long_schedule_seed43/best.pt",
+    "size_bytes": 8979375,
     "size_megabytes": 8.6,
-    "selected_epoch": 2
+    "selected_epoch": 2,
+    "sha256": "03ff13e3cd2939df6392a04dd356cb39aca36236289a185198caf1c196224436"
+  },
+  "bonus_1k_checkpoint": {
+    "path": "artifacts/checkpoints/kuairand_1k_side_multitask/best.pt",
+    "size_bytes": 625695079,
+    "size_megabytes": 596.7,
+    "sha256": "eeef415e913694f415d530a8a3418f95d1428334c792c117b5a858485a3671cf"
   },
   "generic_ranked_top50": {
     "path": "artifacts/submissions/kuairand_pure_top50.csv",

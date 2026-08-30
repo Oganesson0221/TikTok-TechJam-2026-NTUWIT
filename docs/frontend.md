@@ -4,8 +4,9 @@
 
 LoopRank is a short-video **recommendation ranker**, not a fake-video or
 deepfake detector. It receives structured candidate-impression fields and
-estimates `P(click | user, video, context)`. It returns one score per candidate
-and a descending rank for the user's feed.
+computes `ClickScore(user, video, context)`. It returns one bounded propensity
+score per candidate and a descending rank for the user's feed. The score is not
+presented as a calibrated real-world probability.
 
 ![Structured recommender input and output](assets/system-scope.svg)
 
@@ -23,15 +24,16 @@ The zero-build frontend is under `frontend/`. It contains three tabs:
    accessible NDCG@10 graph.
 
 Three fictional demo personas are mapped to anonymized real KuaiRand user IDs.
-Their activity/creator descriptors use supplied structured attributes and their
-tables use actual exported model scores. Names are presentation aliases only;
-the UI does not infer real identity or private preferences.
+Their displayed activity, tenure and social ranges are fields consumed by the
+selected checkpoint, and their tables use actual exported model scores. Names
+are presentation aliases only; the UI does not infer real identity or private
+preferences.
 
-Each ranked row now includes its available content context—upload source,
-duration, anonymized taxonomy tags and author ID—plus a relative-position
-explanation. For example, the first item is identified as the highest learned
-click fit in that persona's candidate set, while later items state their score
-gap from the leader. These are faithful descriptions of metadata and ranking
+Each ranked row includes the video fields used by the selected model—upload
+type, video type, music type and author ID—plus a relative-position explanation.
+For example, the first item is identified as the highest learned click fit in
+that persona's candidate set, while later items state their score gap from the
+leader. These are faithful descriptions of checkpoint inputs and ranking
 position, not causal feature attributions: DCN feature interactions do not
 provide a human-readable reason for an individual's true preference.
 

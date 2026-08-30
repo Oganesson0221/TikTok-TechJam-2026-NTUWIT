@@ -11,7 +11,9 @@ Submission materials: [`docs/devpost.md`](docs/devpost.md),
 [`docs/submission_output.md`](docs/submission_output.md). Final human submission
 steps are tracked in [`docs/submission_checklist.md`](docs/submission_checklist.md).
 The interactive research console and exact product-scope explanation are in
-[`docs/frontend.md`](docs/frontend.md).
+[`docs/frontend.md`](docs/frontend.md). Checkpoint locations, checksums and the
+recommended sharing workflow are in
+[`docs/model_artifacts.md`](docs/model_artifacts.md).
 
 ## What is implemented
 
@@ -163,6 +165,11 @@ artifacts/checkpoints/<experiment_name>/
 ├── best.pt       # validation-best weights, config, vocabulary, and metrics
 └── summary.json  # complete epoch history and final best-checkpoint metrics
 ```
+
+Model weights and generated prediction files are intentionally excluded by
+the repository's `artifacts/` ignore rule. They remain available on the machine
+that ran or downloaded them; see [`docs/model_artifacts.md`](docs/model_artifacts.md)
+for the exact local paths and SHA-256 checksums of the selected models.
 
 The CLI also prints the same JSON summary to standard output for Member 3's
 agent controller. NDCG and Recall are macro-averaged over validation users with

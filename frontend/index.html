@@ -28,7 +28,7 @@
         <div class="hero-copy">
           <p class="eyebrow">Autonomous recommender research · KuaiRand</p>
           <h1>Turn candidate videos into a better-ranked feed.</h1>
-          <p class="hero-lede">LoopRank runs controlled ML experiments, selects a validation-best model, and scores each candidate by predicted click likelihood for a particular user and context.</p>
+          <p class="hero-lede">LoopRank runs controlled ML experiments, selects a validation-best model, and assigns each candidate a learned click-propensity score for a particular user and context.</p>
           <div class="hero-actions">
             <button class="button button-primary" type="button" data-go-to="workflow">See the pipeline</button>
             <button class="button button-secondary" type="button" data-go-to="results">View results</button>
@@ -36,7 +36,7 @@
         </div>
         <aside class="definition-panel" aria-label="Product scope">
           <div class="definition-label">What it answers</div>
-          <p class="formula">P(click <span>|</span> user, video, context)</p>
+          <p class="formula">ClickScore(user, video, context)</p>
           <dl>
             <div><dt>It is</dt><dd>A ranking model for short-video recommendations.</dd></div>
             <div><dt>It is not</dt><dd>A fake-video, deepfake, moderation, or fact-checking detector.</dd></div>
@@ -47,7 +47,7 @@
       <div class="scope-strip">
         <div class="page-shell scope-grid">
           <div><span class="step-number">01</span><strong>Observe</strong><p>Logged impressions and user feedback</p></div>
-          <div><span class="step-number">02</span><strong>Score</strong><p>Click probability for every candidate</p></div>
+          <div><span class="step-number">02</span><strong>Score</strong><p>Click-propensity score for every candidate</p></div>
           <div><span class="step-number">03</span><strong>Rank</strong><p>Highest-scoring videos first</p></div>
         </div>
       </div>
@@ -65,7 +65,7 @@
               <li><strong>User</strong><span>User ID and activity/profile ranges</span></li>
               <li><strong>Video</strong><span>Video ID, author, upload and music type</span></li>
               <li><strong>Context</strong><span>Feed tab, hour, weekday and weekend flag</span></li>
-              <li><strong>Training feedback</strong><span>Click plus long-view, like and follow signals</span></li>
+              <li><strong>Training target</strong><span>Observed click labels from logged impressions</span></li>
             </ul>
           </article>
           <div class="io-arrow" aria-hidden="true">→</div>
@@ -76,7 +76,7 @@
               <div><span class="rank">02</span><span>Video 3797</span><strong>0.696</strong></div>
               <div><span class="rank">03</span><span>Video 5963</span><strong>0.689</strong></div>
             </div>
-            <p class="caption">Each score is a predicted click probability. The rank is its descending position among that user's candidates.</p>
+            <p class="caption">Each value is a model score bounded to 0–1; calibration as a real-world probability has not been established. Rank is its descending position among that user's candidates.</p>
           </article>
         </div>
       </section>
@@ -90,21 +90,21 @@
         <div class="persona-grid" aria-label="Demo personas">
           <button class="persona-card is-selected" type="button" data-persona="26469">
             <span class="persona-avatar">MC</span>
-            <span class="persona-copy"><strong>Mina Chen</strong><small>Established creator · demo alias</small></span>
+            <span class="persona-copy"><strong>Mina Chen</strong><small>Long-tenure active · demo alias</small></span>
             <span class="persona-meta">160 candidates</span>
           </button>
           <button class="persona-card" type="button" data-persona="26540">
             <span class="persona-avatar navy">JL</span>
-            <span class="persona-copy"><strong>Jon Lim</strong><small>Social creator · demo alias</small></span>
+            <span class="persona-copy"><strong>Jon Lim</strong><small>Established active · demo alias</small></span>
             <span class="persona-meta">128 candidates</span>
           </button>
           <button class="persona-card" type="button" data-persona="16967">
             <span class="persona-avatar ochre">AR</span>
-            <span class="persona-copy"><strong>Ari Rao</strong><small>Active viewer · demo alias</small></span>
+            <span class="persona-copy"><strong>Ari Rao</strong><small>Recent high-active · demo alias</small></span>
             <span class="persona-meta">82 candidates</span>
           </button>
         </div>
-        <p class="persona-disclaimer">Personas are fictional presentation aliases mapped to anonymized dataset users. Activity and creator status come from KuaiRand's structured attributes; no demographic identity is inferred.</p>
+        <p class="persona-disclaimer">Personas are fictional presentation aliases mapped to anonymized dataset users. Displayed context uses only profile ranges consumed by the selected checkpoint; no demographic identity is inferred.</p>
         <div class="demo-toolbar">
           <label for="user-select">Example user</label>
           <select id="user-select">
@@ -113,24 +113,24 @@
             <option value="16967">User 16967 · 82 candidates</option>
           </select>
           <button class="button button-primary" id="load-ranking" type="button">Load ranking</button>
-          <span class="data-status" id="data-status">Local verified sample</span>
+          <span class="data-status" id="data-status">Verified local prediction export</span>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Rank</th><th>Video</th><th>Content context</th><th>Click score</th><th>Why this position</th></tr></thead>
+            <thead><tr><th>Rank</th><th>Video</th><th>Model-used video fields</th><th>Click score</th><th>Ranking context</th></tr></thead>
             <tbody id="ranking-body"></tbody>
           </table>
         </div>
         <div class="persona-evidence" id="persona-evidence" aria-live="polite">
-          <div><span>Activity context</span><strong>Full-active · video author · 1,261-day account</strong></div>
-          <div><span>Social context</span><strong>Follows 97 · 35 followers · 7 friends</strong></div>
+          <div><span>Activity context</span><strong>Full-active · account tenure 730+ days</strong></div>
+          <div><span>Profile ranges</span><strong>Following (50,100] · fans [10,100) · friends [5,30)</strong></div>
           <div><span>Candidate context</span><strong>160 exposed videos · top score 0.771</strong></div>
           <div><span>Observed ranking pattern</span><strong>Native movie and web uploads lead this candidate set</strong></div>
-          <p>The explanation describes supplied metadata and relative score position. It does not claim a causal reason or infer the person's real preferences.</p>
+          <p>The explanation describes checkpoint-used metadata and relative score position. It does not claim causal feature attribution or infer the person's real preferences.</p>
         </div>
         <div class="verification-strip" aria-label="Model verification evidence">
-          <div><span>✓</span><p><strong>Valid probabilities</strong>All checked scores are finite and within 0–1.</p></div>
-          <div><span>✓</span><p><strong>Personalized behavior</strong>Video 5351 scores 0.517 for Jon and 0.109 for Ari.</p></div>
+          <div><span>✓</span><p><strong>Valid scores</strong>All checked scores are finite and within 0–1.</p></div>
+          <div><span>✓</span><p><strong>User-context sensitivity</strong>Video 5351 scores 0.517 and 0.109 in two different user-context records.</p></div>
           <div><span>✓</span><p><strong>Ranking improvement</strong>Final Pure NDCG is 2.54% above the internal popularity control.</p></div>
         </div>
       </section>

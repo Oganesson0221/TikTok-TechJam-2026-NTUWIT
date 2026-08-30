@@ -44,37 +44,37 @@ const colors = { control: "#a9a69e", candidate: "#25344a", winner: "#e34a32" };
 
 const personas = {
   "26469": {
-    activity: "Full-active · video author · 1,261-day account",
-    social: "Follows 97 · 35 followers · 7 friends",
+    activity: "Full-active · account tenure 730+ days",
+    profile: "Following (50,100] · fans [10,100) · friends [5,30)",
     candidates: 160,
     pattern: "Native movie and web uploads lead this candidate set"
   },
   "26540": {
-    activity: "Full-active · video author · 2,031-day account",
-    social: "Follows 26 · 210 followers · 25 friends",
+    activity: "Full-active · account tenure 730+ days",
+    profile: "Following (10,50] · fans [100,1k) · friends [5,30)",
     candidates: 128,
     pattern: "A mix of short, native movie and imported uploads ranks highest"
   },
   "16967": {
-    activity: "High-active · viewer account · 148-day account",
-    social: "Follows 124 · 39 followers · 1 friend",
+    activity: "High-active · account tenure 91–180 days",
+    profile: "Following (100,150] · fans [10,100) · friends [1,5)",
     candidates: 82,
-    pattern: "A 40-second native movie upload leads a lower-score candidate set"
+    pattern: "A native movie upload leads this lower-score candidate set"
   }
 };
 
 const videoContexts = {
-  3131: ["Kmovie", 93, "9", 5104614], 3797: ["Web", 168, "39 · 43", 6478743],
-  5963: ["Kmovie", 109, "20 · 43", 7689727], 5137: ["Web", 192, "39", 308095],
-  832: ["LongImport", 146, "39 · 43", 8378922], 584: ["Web", 120, "39", 6628506],
-  4741: ["LongImport", 38, "9", 8346425], 4661: ["Web", 95, "unlisted", 7615841],
-  3984: ["LongImport", 27, "1", 6664891], 444: ["Kmovie", 89, "9", 7336639],
-  5351: ["ShortImport", 15, "4", 6442540], 4278: ["ShortImport", 13, "9", 169266],
-  4486: ["ShareFromOtherApp", 73, "39 · 68", 7331709], 1176: ["LongImport", 86, "28", 6210990],
-  277: ["LongImport", 76, "39", 6397260], 5675: ["LongImport", 177, "11", 3223670],
-  6989: ["Kmovie", 40, "9", 5230385], 5931: ["LongImport", 128, "17", 7517655],
-  7287: ["LongImport", 216, "3", 34042], 4927: ["ShortImport", 11, "8", 6924378],
-  7299: ["LongImport", 42, "20", 5254782], 961: ["LongImport", 86, "39", 1950444]
+  3131: ["Kmovie", "NORMAL", "9", 5104614], 3797: ["Web", "NORMAL", "9", 6478743],
+  5963: ["Kmovie", "NORMAL", "9", 7689727], 5137: ["Web", "NORMAL", "9", 308095],
+  832: ["LongImport", "NORMAL", "9", 8378922], 584: ["Web", "NORMAL", "9", 6628506],
+  4741: ["LongImport", "NORMAL", "9", 8346425], 4661: ["Web", "NORMAL", "9", 7615841],
+  3984: ["LongImport", "NORMAL", "9", 6664891], 444: ["Kmovie", "NORMAL", "9", 7336639],
+  5351: ["ShortImport", "NORMAL", "9", 6442540], 4278: ["ShortImport", "NORMAL", "9", 169266],
+  4486: ["ShareFromOtherApp", "NORMAL", "unlisted", 7331709], 1176: ["LongImport", "NORMAL", "9", 6210990],
+  277: ["LongImport", "NORMAL", "9", 6397260], 5675: ["LongImport", "NORMAL", "9", 3223670],
+  6989: ["Kmovie", "NORMAL", "9", 5230385], 5931: ["LongImport", "NORMAL", "9", 7517655],
+  7287: ["LongImport", "NORMAL", "9", 34042], 4927: ["ShortImport", "NORMAL", "9", 6924378],
+  7299: ["LongImport", "NORMAL", "9", 5254782], 961: ["LongImport", "NORMAL", "9", 1950444]
 };
 
 const uploadLabels = {
@@ -151,7 +151,7 @@ function renderRanking(rows, userId) {
     <tr>
       <td><strong>${String(row.rank).padStart(2, "0")}</strong></td>
       <td>${row.video_id}</td>
-      <td>${(() => { const context = videoContexts[row.video_id] || ["Unknown", "—", "—", "—"]; return `<span class="video-context"><strong>${uploadLabels[context[0]] || context[0]}</strong><small>${context[1]}s · taxonomy ${context[2]} · author ${context[3]}</small></span>`; })()}</td>
+      <td>${(() => { const context = videoContexts[row.video_id] || ["Unknown", "—", "—", "—"]; return `<span class="video-context"><strong>${uploadLabels[context[0]] || context[0]}</strong><small>video type ${context[1]} · music type ${context[2]} · author ${context[3]}</small></span>`; })()}</td>
       <td><strong>${Number(row.score).toFixed(6)}</strong><div class="score-track" aria-label="${(Number(row.score) * 100).toFixed(1)} percent"><span style="width:${Number(row.score) * 100}%"></span></div></td>
       <td><span class="ranking-reason">${rankingReason(row, rows, candidateCount)}</span></td>
     </tr>`).join("");
@@ -160,16 +160,16 @@ function renderRanking(rows, userId) {
 function renderPersonaEvidence(userId, rows) {
   const profile = personas[userId] || {
     activity: "Anonymized KuaiRand user representation",
-    social: "Structured social ranges available to the model",
+    profile: "Structured profile ranges available to the model",
     candidates: rows.length,
     pattern: "Highest-scoring candidates shown in descending order"
   };
   document.querySelector("#persona-evidence").innerHTML = `
     <div><span>Activity context</span><strong>${profile.activity}</strong></div>
-    <div><span>Social context</span><strong>${profile.social}</strong></div>
+    <div><span>Profile ranges</span><strong>${profile.profile}</strong></div>
     <div><span>Candidate context</span><strong>${profile.candidates} exposed videos · top score ${Number(rows[0]?.score || 0).toFixed(3)}</strong></div>
     <div><span>Observed ranking pattern</span><strong>${profile.pattern}</strong></div>
-    <p>The explanation describes supplied metadata and relative score position. Numeric taxonomy tags are anonymized KuaiRand categories. It does not claim a causal reason or infer the person's real preferences.</p>`;
+    <p>The explanation describes checkpoint-used metadata and relative score position. It does not claim causal feature attribution or infer the person's real preferences.</p>`;
   document.querySelectorAll("[data-persona]").forEach((card) => card.classList.toggle("is-selected", card.dataset.persona === userId));
 }
 
@@ -182,12 +182,12 @@ async function loadRanking() {
     const payload = await response.json();
     renderRanking(payload.rows, userId);
     renderPersonaEvidence(userId, payload.rows);
-    status.textContent = "Live checkpoint export";
+    status.textContent = "Verified local prediction export";
   } catch {
     const rows = fallbackRankings[userId] || fallbackRankings["26469"];
     renderRanking(rows, userId);
     renderPersonaEvidence(userId, rows);
-    status.textContent = userId === "26469" ? "Local verified sample" : "Start demo server for this user";
+    status.textContent = userId === "26469" ? "Verified embedded export" : "Start demo server for this user";
   }
 }
 

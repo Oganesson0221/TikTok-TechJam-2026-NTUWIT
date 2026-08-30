@@ -3,6 +3,7 @@
   "purpose": "Executable inference verification of the selected Pure and 1K checkpoints",
   "pure": {
     "checkpoint": "artifacts/checkpoints/dcn_long_schedule_seed43/best.pt",
+    "checkpoint_sha256": "03ff13e3cd2939df6392a04dd356cb39aca36236289a185198caf1c196224436",
     "rows_scored_in_fresh_cpu_run": 2000,
     "users": 328,
     "scores_finite": true,
@@ -14,6 +15,7 @@
   },
   "bonus_1k": {
     "checkpoint": "artifacts/checkpoints/kuairand_1k_side_multitask/best.pt",
+    "checkpoint_sha256": "eeef415e913694f415d530a8a3418f95d1428334c792c117b5a858485a3671cf",
     "exported_rows_checked": 3328531,
     "users": 490,
     "scores_finite": true,
