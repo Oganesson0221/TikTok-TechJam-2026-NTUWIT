@@ -1,218 +1,525 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="LoopRank — an autonomous research console for short-video recommendation ranking.">
-  <title>LoopRank — Recommender Research Console</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
-  <header class="site-header">
-    <a class="brand" href="#overview" data-tab-link="overview" aria-label="LoopRank home">
-      <img src="../docs/assets/brand-mark.svg" width="36" height="36" alt="">
-      <span><strong>LoopRank</strong><small>Research console</small></span>
-    </a>
-    <nav class="main-nav" aria-label="Primary navigation">
-      <button class="nav-link is-active" type="button" data-tab="overview">Overview</button>
-      <button class="nav-link" type="button" data-tab="workflow">How it works</button>
-      <button class="nav-link" type="button" data-tab="results">Results</button>
-    </nav>
-    <div class="build-status"><span></span> Verified build</div>
-  </header>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="LoopRank — an autonomous research console for short-video recommendation ranking."
+    />
+    <title>LoopRank — Recommender Research Console</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <a
+        class="brand"
+        href="#overview"
+        data-tab-link="overview"
+        aria-label="LoopRank home"
+      >
+        <img
+          src="../docs/assets/brand-mark.svg"
+          width="36"
+          height="36"
+          alt=""
+        />
+        <span><strong>LoopRank</strong><small>Research console</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Primary navigation">
+        <button class="nav-link is-active" type="button" data-tab="overview">
+          Overview
+        </button>
+        <button class="nav-link" type="button" data-tab="workflow">
+          How it works
+        </button>
+        <button class="nav-link" type="button" data-tab="results">
+          Results
+        </button>
+      </nav>
+      <div class="build-status"><span></span> Verified build</div>
+    </header>
 
-  <main id="main-content">
-    <section class="tab-panel is-active" id="overview" data-panel="overview">
-      <div class="hero page-shell">
-        <div class="hero-copy">
-          <p class="eyebrow">Autonomous recommender research · KuaiRand</p>
-          <h1>Turn candidate videos into a better-ranked feed.</h1>
-          <p class="hero-lede">LoopRank runs controlled ML experiments, selects a validation-best model, and assigns each candidate a learned click-propensity score for a particular user and context.</p>
-          <div class="hero-actions">
-            <button class="button button-primary" type="button" data-go-to="workflow">See the pipeline</button>
-            <button class="button button-secondary" type="button" data-go-to="results">View results</button>
+    <main id="main-content">
+      <section class="tab-panel is-active" id="overview" data-panel="overview">
+        <div class="hero page-shell">
+          <div class="hero-copy">
+            <p class="eyebrow">Autonomous recommender research · KuaiRand</p>
+            <h1>Turn candidate videos into a better-ranked feed.</h1>
+            <p class="hero-lede">
+              LoopRank runs controlled ML experiments, selects a validation-best
+              model, and assigns each candidate a learned click-propensity score
+              for a particular user and context.
+            </p>
+            <div class="hero-actions">
+              <button
+                class="button button-primary"
+                type="button"
+                data-go-to="workflow"
+              >
+                See the pipeline
+              </button>
+              <button
+                class="button button-secondary"
+                type="button"
+                data-go-to="results"
+              >
+                View results
+              </button>
+            </div>
+          </div>
+          <aside class="definition-panel" aria-label="Product scope">
+            <div class="definition-label">What it answers</div>
+            <p class="formula">ClickScore(user, video, context)</p>
+            <dl>
+              <div>
+                <dt>It is</dt>
+                <dd>A ranking model for short-video recommendations.</dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+
+        <div class="scope-strip">
+          <div class="page-shell scope-grid">
+            <div>
+              <span class="step-number">01</span><strong>Observe</strong>
+              <p>Logged impressions and user feedback</p>
+            </div>
+            <div>
+              <span class="step-number">02</span><strong>Score</strong>
+              <p>Click-propensity score for every candidate</p>
+            </div>
+            <div>
+              <span class="step-number">03</span><strong>Rank</strong>
+              <p>Highest-scoring videos first</p>
+            </div>
           </div>
         </div>
-        <aside class="definition-panel" aria-label="Product scope">
-          <div class="definition-label">What it answers</div>
-          <p class="formula">ClickScore(user, video, context)</p>
-          <dl>
-            <div><dt>It is</dt><dd>A ranking model for short-video recommendations.</dd></div>
-            <div><dt>It is not</dt><dd>A fake-video, deepfake, moderation, or fact-checking detector.</dd></div>
-          </dl>
-        </aside>
-      </div>
 
-      <div class="scope-strip">
-        <div class="page-shell scope-grid">
-          <div><span class="step-number">01</span><strong>Observe</strong><p>Logged impressions and user feedback</p></div>
-          <div><span class="step-number">02</span><strong>Score</strong><p>Click-propensity score for every candidate</p></div>
-          <div><span class="step-number">03</span><strong>Rank</strong><p>Highest-scoring videos first</p></div>
-        </div>
-      </div>
+        <section
+          class="page-shell explainer-section"
+          aria-labelledby="io-heading"
+        >
+          <div class="section-heading">
+            <p class="eyebrow">Input → output</p>
+            <h2 id="io-heading">What goes into the model?</h2>
+            <p>
+              The model works on structured recommendation records. It does not
+              open or analyze the video file itself.
+            </p>
+          </div>
+          <div class="io-layout">
+            <article class="io-column">
+              <div class="io-title">
+                <span>IN</span>
+                <h3>Candidate impressions</h3>
+              </div>
+              <ul class="feature-list">
+                <li>
+                  <strong>User</strong
+                  ><span>User ID and activity/profile ranges</span>
+                </li>
+                <li>
+                  <strong>Video</strong
+                  ><span>Video ID, author, upload and music type</span>
+                </li>
+                <li>
+                  <strong>Context</strong
+                  ><span>Feed tab, hour, weekday and weekend flag</span>
+                </li>
+                <li>
+                  <strong>Training target</strong
+                  ><span>Observed click labels from logged impressions</span>
+                </li>
+              </ul>
+            </article>
+            <div class="io-arrow" aria-hidden="true">→</div>
+            <article class="io-column output-column">
+              <div class="io-title">
+                <span>OUT</span>
+                <h3>A ranked candidate list</h3>
+              </div>
+              <div class="output-example">
+                <div>
+                  <span class="rank">01</span><span>Video 3131</span
+                  ><strong>0.771</strong>
+                </div>
+                <div>
+                  <span class="rank">02</span><span>Video 3797</span
+                  ><strong>0.696</strong>
+                </div>
+                <div>
+                  <span class="rank">03</span><span>Video 5963</span
+                  ><strong>0.689</strong>
+                </div>
+              </div>
+              <p class="caption">
+                Each value is a model score bounded to 0–1; calibration as a
+                real-world probability has not been established. Rank is its
+                descending position among that user's candidates.
+              </p>
+            </article>
+          </div>
+        </section>
 
-      <section class="page-shell explainer-section" aria-labelledby="io-heading">
-        <div class="section-heading">
-          <p class="eyebrow">Input → output</p>
-          <h2 id="io-heading">What goes into the model?</h2>
-          <p>The model works on structured recommendation records. It does not open or analyze the video file itself.</p>
-        </div>
-        <div class="io-layout">
-          <article class="io-column">
-            <div class="io-title"><span>IN</span><h3>Candidate impressions</h3></div>
-            <ul class="feature-list">
-              <li><strong>User</strong><span>User ID and activity/profile ranges</span></li>
-              <li><strong>Video</strong><span>Video ID, author, upload and music type</span></li>
-              <li><strong>Context</strong><span>Feed tab, hour, weekday and weekend flag</span></li>
-              <li><strong>Training target</strong><span>Observed click labels from logged impressions</span></li>
-            </ul>
-          </article>
-          <div class="io-arrow" aria-hidden="true">→</div>
-          <article class="io-column output-column">
-            <div class="io-title"><span>OUT</span><h3>A ranked candidate list</h3></div>
-            <div class="output-example">
-              <div><span class="rank">01</span><span>Video 3131</span><strong>0.771</strong></div>
-              <div><span class="rank">02</span><span>Video 3797</span><strong>0.696</strong></div>
-              <div><span class="rank">03</span><span>Video 5963</span><strong>0.689</strong></div>
+        <section class="page-shell ranking-demo" aria-labelledby="demo-heading">
+          <div class="section-heading compact">
+            <p class="eyebrow">Model output explorer</p>
+            <h2 id="demo-heading">Inspect a real ranked list</h2>
+            <p>
+              These rows come from the validation-selected Pure checkpoint's
+              label-blind prediction export.
+            </p>
+          </div>
+          <div class="persona-grid" aria-label="Demo personas">
+            <button
+              class="persona-card is-selected"
+              type="button"
+              data-persona="26469"
+            >
+              <span class="persona-avatar">MC</span>
+              <span class="persona-copy"
+                ><strong>Mina Chen</strong
+                ><small>Long-tenure active · demo alias</small></span
+              >
+              <span class="persona-meta">160 candidates</span>
+            </button>
+            <button class="persona-card" type="button" data-persona="26540">
+              <span class="persona-avatar navy">JL</span>
+              <span class="persona-copy"
+                ><strong>Jon Lim</strong
+                ><small>Established active · demo alias</small></span
+              >
+              <span class="persona-meta">128 candidates</span>
+            </button>
+            <button class="persona-card" type="button" data-persona="16967">
+              <span class="persona-avatar ochre">AR</span>
+              <span class="persona-copy"
+                ><strong>Ari Rao</strong
+                ><small>Recent high-active · demo alias</small></span
+              >
+              <span class="persona-meta">82 candidates</span>
+            </button>
+          </div>
+          <p class="persona-disclaimer">
+            Personas are fictional presentation aliases mapped to anonymized
+            dataset users. Displayed context uses only profile ranges consumed
+            by the selected checkpoint; no demographic identity is inferred.
+          </p>
+          <div class="demo-toolbar">
+            <label for="user-select">Example user</label>
+            <select id="user-select">
+              <option value="26469">User 26469 · 160 candidates</option>
+              <option value="26540">User 26540 · 128 candidates</option>
+              <option value="16967">User 16967 · 82 candidates</option>
+            </select>
+            <button
+              class="button button-primary"
+              id="load-ranking"
+              type="button"
+            >
+              Load ranking
+            </button>
+            <span class="data-status" id="data-status"
+              >Verified local prediction export</span
+            >
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Video</th>
+                  <th>Model-used video fields</th>
+                  <th>Click score</th>
+                  <th>Ranking context</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-body"></tbody>
+            </table>
+          </div>
+          <div
+            class="persona-evidence"
+            id="persona-evidence"
+            aria-live="polite"
+          >
+            <div>
+              <span>Activity context</span
+              ><strong>Full-active · account tenure 730+ days</strong>
             </div>
-            <p class="caption">Each value is a model score bounded to 0–1; calibration as a real-world probability has not been established. Rank is its descending position among that user's candidates.</p>
+            <div>
+              <span>Profile ranges</span
+              ><strong
+                >Following (50,100] · fans [10,100) · friends [5,30)</strong
+              >
+            </div>
+            <div>
+              <span>Candidate context</span
+              ><strong>160 exposed videos · top score 0.771</strong>
+            </div>
+            <div>
+              <span>Observed ranking pattern</span
+              ><strong
+                >Native movie and web uploads lead this candidate set</strong
+              >
+            </div>
+            <p>
+              The explanation describes checkpoint-used metadata and relative
+              score position. It does not claim causal feature attribution or
+              infer the person's real preferences.
+            </p>
+          </div>
+          <div
+            class="verification-strip"
+            aria-label="Model verification evidence"
+          >
+            <div>
+              <span>✓</span>
+              <p>
+                <strong>Valid scores</strong>All checked scores are finite and
+                within 0–1.
+              </p>
+            </div>
+            <div>
+              <span>✓</span>
+              <p>
+                <strong>User-context sensitivity</strong>Video 5351 scores 0.517
+                and 0.109 in two different user-context records.
+              </p>
+            </div>
+            <div>
+              <span>✓</span>
+              <p>
+                <strong>Ranking improvement</strong>Final Pure NDCG is 2.54%
+                above the internal popularity control.
+              </p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="workflow" data-panel="workflow" hidden>
+        <div class="page-shell page-intro">
+          <p class="eyebrow">System workflow</p>
+          <h1>Research that leaves a trail.</h1>
+          <p>
+            Every experiment starts from a bounded hypothesis, trains against
+            the same validation contract, and records its metrics and resource
+            use.
+          </p>
+        </div>
+        <section
+          class="page-shell workflow-grid"
+          aria-label="Autonomous research stages"
+        >
+          <article>
+            <span>01</span>
+            <h2>Read</h2>
+            <p>
+              Load the benchmark contract, train/validation split and target
+              metrics.
+            </p>
           </article>
-        </div>
+          <article>
+            <span>02</span>
+            <h2>Propose</h2>
+            <p>
+              Select one controlled feature, model, objective or training
+              change.
+            </p>
+          </article>
+          <article>
+            <span>03</span>
+            <h2>Train</h2>
+            <p>
+              Run the scheduled experiment and preserve the validation-best
+              checkpoint.
+            </p>
+          </article>
+          <article>
+            <span>04</span>
+            <h2>Evaluate</h2>
+            <p>Measure NDCG@10 and Recall@50 on logged candidates.</p>
+          </article>
+          <article>
+            <span>05</span>
+            <h2>Reflect</h2>
+            <p>Use measured history to choose the next bounded comparison.</p>
+          </article>
+          <article>
+            <span>06</span>
+            <h2>Export</h2>
+            <p>Write label-blind scores and ranks with a checksum manifest.</p>
+          </article>
+        </section>
+        <section class="page-shell model-card">
+          <div>
+            <p class="eyebrow">Selected system</p>
+            <h2>Deep & Cross Network</h2>
+            <p>
+              The final Pure model combines learned categorical embeddings,
+              explicit feature crosses, and a deep tower. The 1K bonus model
+              adds shared multi-feedback learning and richer side features.
+            </p>
+          </div>
+          <dl class="spec-list">
+            <div>
+              <dt>Primary objective</dt>
+              <dd>Click ranking</dd>
+            </div>
+            <div>
+              <dt>Validation</dt>
+              <dd>NDCG@10 + Recall@50</dd>
+            </div>
+            <div>
+              <dt>Selection</dt>
+              <dd>Validation-best checkpoint</dd>
+            </div>
+            <div>
+              <dt>Hardware</dt>
+              <dd>NSCC NVIDIA A100</dd>
+            </div>
+          </dl>
+        </section>
       </section>
 
-      <section class="page-shell ranking-demo" aria-labelledby="demo-heading">
-        <div class="section-heading compact">
-          <p class="eyebrow">Model output explorer</p>
-          <h2 id="demo-heading">Inspect a real ranked list</h2>
-          <p>These rows come from the validation-selected Pure checkpoint's label-blind prediction export.</p>
+      <section class="tab-panel" id="results" data-panel="results" hidden>
+        <div class="page-shell page-intro results-intro">
+          <div>
+            <p class="eyebrow">Successful benchmark runs</p>
+            <h1>Measured progress, clearly scoped.</h1>
+            <p>
+              Validation scores use logged candidate impressions. They are
+              reproducible internal-protocol results, not an organizer
+              leaderboard claim.
+            </p>
+          </div>
+          <div class="headline-result">
+            <span>Best Pure NDCG@10</span><strong>0.837940</strong
+            ><small>DCN · seed 43</small>
+          </div>
         </div>
-        <div class="persona-grid" aria-label="Demo personas">
-          <button class="persona-card is-selected" type="button" data-persona="26469">
-            <span class="persona-avatar">MC</span>
-            <span class="persona-copy"><strong>Mina Chen</strong><small>Long-tenure active · demo alias</small></span>
-            <span class="persona-meta">160 candidates</span>
-          </button>
-          <button class="persona-card" type="button" data-persona="26540">
-            <span class="persona-avatar navy">JL</span>
-            <span class="persona-copy"><strong>Jon Lim</strong><small>Established active · demo alias</small></span>
-            <span class="persona-meta">128 candidates</span>
-          </button>
-          <button class="persona-card" type="button" data-persona="16967">
-            <span class="persona-avatar ochre">AR</span>
-            <span class="persona-copy"><strong>Ari Rao</strong><small>Recent high-active · demo alias</small></span>
-            <span class="persona-meta">82 candidates</span>
-          </button>
-        </div>
-        <p class="persona-disclaimer">Personas are fictional presentation aliases mapped to anonymized dataset users. Displayed context uses only profile ranges consumed by the selected checkpoint; no demographic identity is inferred.</p>
-        <div class="demo-toolbar">
-          <label for="user-select">Example user</label>
-          <select id="user-select">
-            <option value="26469">User 26469 · 160 candidates</option>
-            <option value="26540">User 26540 · 128 candidates</option>
-            <option value="16967">User 16967 · 82 candidates</option>
-          </select>
-          <button class="button button-primary" id="load-ranking" type="button">Load ranking</button>
-          <span class="data-status" id="data-status">Verified local prediction export</span>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Rank</th><th>Video</th><th>Model-used video fields</th><th>Click score</th><th>Ranking context</th></tr></thead>
-            <tbody id="ranking-body"></tbody>
-          </table>
-        </div>
-        <div class="persona-evidence" id="persona-evidence" aria-live="polite">
-          <div><span>Activity context</span><strong>Full-active · account tenure 730+ days</strong></div>
-          <div><span>Profile ranges</span><strong>Following (50,100] · fans [10,100) · friends [5,30)</strong></div>
-          <div><span>Candidate context</span><strong>160 exposed videos · top score 0.771</strong></div>
-          <div><span>Observed ranking pattern</span><strong>Native movie and web uploads lead this candidate set</strong></div>
-          <p>The explanation describes checkpoint-used metadata and relative score position. It does not claim causal feature attribution or infer the person's real preferences.</p>
-        </div>
-        <div class="verification-strip" aria-label="Model verification evidence">
-          <div><span>✓</span><p><strong>Valid scores</strong>All checked scores are finite and within 0–1.</p></div>
-          <div><span>✓</span><p><strong>User-context sensitivity</strong>Video 5351 scores 0.517 and 0.109 in two different user-context records.</p></div>
-          <div><span>✓</span><p><strong>Ranking improvement</strong>Final Pure NDCG is 2.54% above the internal popularity control.</p></div>
-        </div>
-      </section>
-    </section>
 
-    <section class="tab-panel" id="workflow" data-panel="workflow" hidden>
-      <div class="page-shell page-intro">
-        <p class="eyebrow">System workflow</p>
-        <h1>Research that leaves a trail.</h1>
-        <p>Every experiment starts from a bounded hypothesis, trains against the same validation contract, and records its metrics and resource use.</p>
+        <section class="page-shell chart-card" aria-labelledby="chart-title">
+          <div class="chart-heading">
+            <div>
+              <p class="eyebrow">KuaiRand-Pure</p>
+              <h2 id="chart-title">NDCG@10 progression</h2>
+            </div>
+            <p>Higher is better · axis begins at 0.80</p>
+          </div>
+          <div class="chart-container">
+            <svg
+              id="results-chart"
+              role="img"
+              aria-label="NDCG at 10 comparison across successful models"
+            ></svg>
+          </div>
+          <div class="chart-legend">
+            <span><i class="control"></i>Controls</span
+            ><span><i class="candidate"></i>Candidate models</span
+            ><span><i class="winner"></i>Selected winner</span>
+          </div>
+        </section>
+
+        <section class="page-shell result-cards" aria-label="Key results">
+          <article>
+            <span>Pure benchmark</span><strong>0.837940</strong>
+            <p>NDCG@10</p>
+            <small>0.999918 Recall@50</small>
+          </article>
+          <article>
+            <span>1K bonus benchmark</span><strong>0.690004</strong>
+            <p>NDCG@10</p>
+            <small>0.030152 Recall@50</small>
+          </article>
+          <article>
+            <span>Three-seed mean</span><strong>0.837502</strong>
+            <p>NDCG@10</p>
+            <small>0.000934 range</small>
+          </article>
+          <article>
+            <span>API decision cost</span><strong>$0.0012</strong>
+            <p>Successful request</p>
+            <small>1,901 total tokens</small>
+          </article>
+        </section>
+
+        <section
+          class="page-shell benchmark-table"
+          aria-labelledby="benchmark-title"
+        >
+          <div class="section-heading compact">
+            <p class="eyebrow">Results table</p>
+            <h2 id="benchmark-title">Successful validation runs</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dataset</th>
+                  <th>Model</th>
+                  <th>NDCG@10</th>
+                  <th>Recall@50</th>
+                  <th>Outcome</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Pure</td>
+                  <td>Item popularity</td>
+                  <td>0.817216</td>
+                  <td>0.999867</td>
+                  <td><span class="tag">Control</span></td>
+                </tr>
+                <tr>
+                  <td>Pure</td>
+                  <td>Matrix factorization</td>
+                  <td>0.818786</td>
+                  <td>0.999878</td>
+                  <td><span class="tag">Control</span></td>
+                </tr>
+                <tr>
+                  <td>Pure</td>
+                  <td>DeepFM · all exposures</td>
+                  <td>0.833730</td>
+                  <td>0.999921</td>
+                  <td><span class="tag tag-good">Improved</span></td>
+                </tr>
+                <tr class="winner-row">
+                  <td>Pure</td>
+                  <td>DCN · seed 43</td>
+                  <td><strong>0.837940</strong></td>
+                  <td>0.999918</td>
+                  <td><span class="tag tag-best">Selected</span></td>
+                </tr>
+                <tr>
+                  <td>1K bonus</td>
+                  <td>Side-feature multi-task DCN</td>
+                  <td><strong>0.690004</strong></td>
+                  <td>0.030152</td>
+                  <td><span class="tag tag-best">Bonus winner</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">
+            Recall@50 is saturated on the small Pure logged split because 99.90%
+            of users have 50 or fewer candidates. The 1K split has a median
+            4,682 candidates per user, making Recall@50 discriminating there.
+          </p>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <div class="page-shell">
+        <span>LoopRank · TikTok TechJam 2026</span
+        ><span>KuaiRand-Pure + KuaiRand-1K</span>
       </div>
-      <section class="page-shell workflow-grid" aria-label="Autonomous research stages">
-        <article><span>01</span><h2>Read</h2><p>Load the benchmark contract, train/validation split and target metrics.</p></article>
-        <article><span>02</span><h2>Propose</h2><p>Select one controlled feature, model, objective or training change.</p></article>
-        <article><span>03</span><h2>Train</h2><p>Run the scheduled experiment and preserve the validation-best checkpoint.</p></article>
-        <article><span>04</span><h2>Evaluate</h2><p>Measure NDCG@10 and Recall@50 on logged candidates.</p></article>
-        <article><span>05</span><h2>Reflect</h2><p>Use measured history to choose the next bounded comparison.</p></article>
-        <article><span>06</span><h2>Export</h2><p>Write label-blind scores and ranks with a checksum manifest.</p></article>
-      </section>
-      <section class="page-shell model-card">
-        <div>
-          <p class="eyebrow">Selected system</p>
-          <h2>Deep & Cross Network</h2>
-          <p>The final Pure model combines learned categorical embeddings, explicit feature crosses, and a deep tower. The 1K bonus model adds shared multi-feedback learning and richer side features.</p>
-        </div>
-        <dl class="spec-list">
-          <div><dt>Primary objective</dt><dd>Click ranking</dd></div>
-          <div><dt>Validation</dt><dd>NDCG@10 + Recall@50</dd></div>
-          <div><dt>Selection</dt><dd>Validation-best checkpoint</dd></div>
-          <div><dt>Hardware</dt><dd>NSCC NVIDIA A100</dd></div>
-        </dl>
-      </section>
-    </section>
-
-    <section class="tab-panel" id="results" data-panel="results" hidden>
-      <div class="page-shell page-intro results-intro">
-        <div>
-          <p class="eyebrow">Successful benchmark runs</p>
-          <h1>Measured progress, clearly scoped.</h1>
-          <p>Validation scores use logged candidate impressions. They are reproducible internal-protocol results, not an organizer leaderboard claim.</p>
-        </div>
-        <div class="headline-result"><span>Best Pure NDCG@10</span><strong>0.837940</strong><small>DCN · seed 43</small></div>
-      </div>
-
-      <section class="page-shell chart-card" aria-labelledby="chart-title">
-        <div class="chart-heading">
-          <div><p class="eyebrow">KuaiRand-Pure</p><h2 id="chart-title">NDCG@10 progression</h2></div>
-          <p>Higher is better · axis begins at 0.80</p>
-        </div>
-        <div class="chart-container"><svg id="results-chart" role="img" aria-label="NDCG at 10 comparison across successful models"></svg></div>
-        <div class="chart-legend"><span><i class="control"></i>Controls</span><span><i class="candidate"></i>Candidate models</span><span><i class="winner"></i>Selected winner</span></div>
-      </section>
-
-      <section class="page-shell result-cards" aria-label="Key results">
-        <article><span>Pure benchmark</span><strong>0.837940</strong><p>NDCG@10</p><small>0.999918 Recall@50</small></article>
-        <article><span>1K bonus benchmark</span><strong>0.690004</strong><p>NDCG@10</p><small>0.030152 Recall@50</small></article>
-        <article><span>Three-seed mean</span><strong>0.837502</strong><p>NDCG@10</p><small>0.000934 range</small></article>
-        <article><span>API decision cost</span><strong>$0.0012</strong><p>Successful request</p><small>1,901 total tokens</small></article>
-      </section>
-
-      <section class="page-shell benchmark-table" aria-labelledby="benchmark-title">
-        <div class="section-heading compact"><p class="eyebrow">Results table</p><h2 id="benchmark-title">Successful validation runs</h2></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Dataset</th><th>Model</th><th>NDCG@10</th><th>Recall@50</th><th>Outcome</th></tr></thead>
-            <tbody>
-              <tr><td>Pure</td><td>Item popularity</td><td>0.817216</td><td>0.999867</td><td><span class="tag">Control</span></td></tr>
-              <tr><td>Pure</td><td>Matrix factorization</td><td>0.818786</td><td>0.999878</td><td><span class="tag">Control</span></td></tr>
-              <tr><td>Pure</td><td>DeepFM · all exposures</td><td>0.833730</td><td>0.999921</td><td><span class="tag tag-good">Improved</span></td></tr>
-              <tr class="winner-row"><td>Pure</td><td>DCN · seed 43</td><td><strong>0.837940</strong></td><td>0.999918</td><td><span class="tag tag-best">Selected</span></td></tr>
-              <tr><td>1K bonus</td><td>Side-feature multi-task DCN</td><td><strong>0.690004</strong></td><td>0.030152</td><td><span class="tag tag-best">Bonus winner</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="table-note">Recall@50 is saturated on the small Pure logged split because 99.90% of users have 50 or fewer candidates. The 1K split has a median 4,682 candidates per user, making Recall@50 discriminating there.</p>
-      </section>
-    </section>
-  </main>
-
-  <footer>
-    <div class="page-shell"><span>LoopRank · TikTok TechJam 2026</span><span>KuaiRand-Pure + KuaiRand-1K</span></div>
-  </footer>
-  <script src="app.js"></script>
-</body>
+    </footer>
+    <script src="app.js"></script>
+  </body>
 </html>
