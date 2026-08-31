@@ -1,0 +1,89 @@
+{
+  "artifacts": [
+    {
+      "path": "README.md",
+      "bytes": 519,
+      "sha256": "4982a7e3b47a7831285e276fdc20f0c2f7a2c783ed0542ef9fee5f16482bb397"
+    },
+    {
+      "path": "checkpoints/context_fm.pkl",
+      "bytes": 3781367,
+      "sha256": "3fc22029c926bf21bfa1ba5805abed515d77f1d340928e56bdb0ae48d48aeb9f"
+    },
+    {
+      "path": "checkpoints/context_fm_seed1.pkl",
+      "bytes": 3781367,
+      "sha256": "3d42305f910c4fc32098e96f005e567cc5cb8ac80eee5f67aa6251627b58fdd0"
+    },
+    {
+      "path": "checkpoints/context_fm_seed2.pkl",
+      "bytes": 3781367,
+      "sha256": "af3ed2c419652f53d427074e8169aae60a91311ee8988ee83cb36f8af34c4887"
+    },
+    {
+      "path": "checkpoints/deepfm_best.pt",
+      "bytes": 9228435,
+      "sha256": "a217eb609eaa43be87095e00fdd1a6329b46f235a64efa140e76bef0d264c4b2"
+    },
+    {
+      "path": "checkpoints/ensemble.json",
+      "bytes": 550,
+      "sha256": "4707594815f45764d77922032efd604ad87eda6a2a70bab6b9e6fedf68ad26c7"
+    },
+    {
+      "path": "checkpoints/fm_model.pkl",
+      "bytes": 2738225,
+      "sha256": "16f770a5fa73c9ad8325bb637af91c0342236987b87a00625bebd0418661c98b"
+    },
+    {
+      "path": "checkpoints/fm_seed1.pkl",
+      "bytes": 3172621,
+      "sha256": "fb09b1dd9582bf2ae5f3d1ee82694823280b13b583b67cc365999947ac39c450"
+    },
+    {
+      "path": "checkpoints/fm_seed2.pkl",
+      "bytes": 3172621,
+      "sha256": "24f5419fbe9854d67fb8c3e695df570de9c4b6dec591170d63e66efcdda16cef"
+    },
+    {
+      "path": "checkpoints/kuairand_1k_hashed_fm.pt",
+      "bytes": 285293917,
+      "sha256": "f1d953cdc2ad550615e8c880d8605c22d5dd12f7bb7c7284d902b7deb94ad485"
+    },
+    {
+      "path": "checkpoints/openai_agent_best.pt",
+      "bytes": 8769127,
+      "sha256": "8d7518b35e31676a0746decd582fb23d426604d89c433659004fae5dabc3491b"
+    },
+    {
+      "path": "files/kuairand_1k.csv",
+      "bytes": 130878757,
+      "sha256": "1efa6a384190b1189de68aa28d5eb8ac36ed7aef471bb878ace16f28d2a5b258"
+    },
+    {
+      "path": "files/kuairand_pure.csv",
+      "bytes": 6081765,
+      "sha256": "06afca72693636b2e1f0115d8cdaefb05c049c5e3fb032649ce28c3f6f5dd50f"
+    },
+    {
+      "path": "resource_usage.json",
+      "bytes": 1704,
+      "sha256": "943bc8bd062a08e5bc85bb2e1382a2987648359ef7dd5d5bf644fd71aea4eae4"
+    },
+    {
+      "path": "results_summary.json",
+      "bytes": 1751,
+      "sha256": "25b0b05064e464f95233d1146f45a1dda3dfdd8bb0e18a065884188e52917db1"
+    },
+    {
+      "path": "results_table.csv",
+      "bytes": 773,
+      "sha256": "a3f1b7821b19cdd4003d2c6274816a0f2c1293439a86f31a4bbe502ca9906e63"
+    },
+    {
+      "path": "schema_status.json",
+      "bytes": 443,
+      "sha256": "5441f9d58653577319833505dcd9a95178e2e055302dc0f11b784e2524b88bf0"
+    }
+  ]
+}

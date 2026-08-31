@@ -1,0 +1,5 @@
+benchmark,model,GAUC,nDCG@5,primary,NDCG@10_supplemental,Recall@50_supplemental,absolute_primary_delta_over_official_baseline,status
+KuaiRand-Pure,official FM baseline (published),0.6674,0.5357,0.6016,,,0.0,reference
+KuaiRand-Pure,seed-averaged FM/DeepFM/context-FM ensemble,0.6699834636230305,0.5371989958137839,0.6035912297184072,0.8129241832296327,0.9999786215153069,0.0019912297184072,validation-best
+KuaiRand-Pure,OpenAI agent-selected multitask DCN aux=0.1,0.668099501313033,0.536645995765373,0.602372748539203,0.8120649409333642,0.9999750584345248,0.000772748539203,autonomous-agent selected; final ensemble retained
+KuaiRand-1K,streaming hashed FM,0.647499805085042,0.5719051481956222,0.6097024766403321,0.5624934985860229,0.09634207862732756,,completed bonus

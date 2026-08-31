@@ -1,0 +1,18 @@
+{
+  "starter_kit_executable_protocol": {
+    "target": "long_view",
+    "metrics": [
+      "GAUC",
+      "nDCG@5"
+    ],
+    "primary": "mean"
+  },
+  "portal_checklist_wording": {
+    "metrics": [
+      "NDCG@10",
+      "Recall@50"
+    ]
+  },
+  "submission_policy": "Report Starter Kit metrics as official and portal metrics as supplemental; never substitute one pair for the other.",
+  "pure_validation_caveat": "Recall@50 is nearly saturated because 99.9166% of evaluated Pure users have at most 50 validation candidates."
+}

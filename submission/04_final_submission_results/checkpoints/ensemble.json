@@ -1,0 +1,15 @@
+{
+  "method": "raw score weighted ensemble",
+  "components": {
+    "fm_model.pkl": 0.18333333333333335,
+    "fm_seed1.pkl": 0.18333333333333335,
+    "fm_seed2.pkl": 0.18333333333333335,
+    "deepfm_best.pt": 0.125,
+    "context_fm.pkl": 0.10833333333333334,
+    "context_fm_seed1.pkl": 0.10833333333333334,
+    "context_fm_seed2.pkl": 0.10833333333333334
+  },
+  "group_recipe": "0.55 three-seed FM average + 0.125 DeepFM + 0.325 three-seed context-FM average",
+  "selected_on": "KuaiRand-Pure validation primary score",
+  "test_labels_read": false
+}

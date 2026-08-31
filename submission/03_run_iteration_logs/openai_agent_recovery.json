@@ -1,0 +1,8 @@
+{
+  "failed_nscc_job": "15867517.pbs101",
+  "failure": "NSCC compute-node outbound HTTPS connection reset before the first OpenAI decision",
+  "failed_job_wall_seconds": 19,
+  "recovery": "Executed the identical bounded configuration locally with API egress; 6/6 experiments succeeded.",
+  "fallback_policy_used": false,
+  "manual_interventions": 0
+}

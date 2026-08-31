@@ -1,0 +1,8 @@
+{
+  "manual_interventions_during_completed_model_runs": 0,
+  "definition": "A manual intervention is human action needed after the run started to recover or choose the next iteration; the initial task request is excluded.",
+  "automated_recovery_events": 14,
+  "credential_and_security_events_excluded": 2,
+  "credential_note": "The user entered the NSCC password to open an encrypted reusable control session and rotated an exposed API key; experiment choice/recovery required no human action.",
+  "security_action_outside_model_run": "The exposed key was revoked and replaced; the rotated key is installed in the mode-600 NSCC secret file and was never printed by the secure configuration path."
+}

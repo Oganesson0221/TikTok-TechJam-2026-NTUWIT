@@ -1,0 +1,64 @@
+{
+  "required_benchmark": "KuaiRand-Pure",
+  "target": "long_view",
+  "metrics": [
+    "GAUC",
+    "nDCG@5"
+  ],
+  "primary_formula": "(GAUC + nDCG@5) / 2",
+  "validation_best": {
+    "GAUC": 0.6699834636230305,
+    "nDCG@5": 0.5371989958137839,
+    "primary": 0.6035912297184072
+  },
+  "official_baseline": {
+    "GAUC": 0.6674,
+    "nDCG@5": 0.5357,
+    "primary": 0.6016
+  },
+  "absolute_delta": {
+    "GAUC": 0.0025834636230305,
+    "nDCG@5": 0.0014989958137839,
+    "primary": 0.0019912297184072
+  },
+  "portal_requested_supplemental_metrics": {
+    "NDCG@10": 0.8129241832296327,
+    "Recall@50": 0.9999786215153069,
+    "evaluated_users": 15592,
+    "protocol_note": "Supplemental only; Starter Kit scoring uses GAUC/nDCG@5."
+  },
+  "bonus_benchmarks": {
+    "KuaiRand-1K": {
+      "GAUC": 0.647499805085042,
+      "nDCG@5": 0.5719051481956222,
+      "primary": 0.6097024766403321,
+      "NDCG@10": 0.5624934985860229,
+      "Recall@50": 0.09634207862732756
+    }
+  },
+  "autonomous_openai_agent": {
+    "status": "completed",
+    "decision_source": "openai:gpt-5-mini",
+    "experiments_attempted": 6,
+    "experiments_succeeded": 6,
+    "stop_reason": "converged",
+    "manual_interventions": 0,
+    "llm_tokens": {
+      "input": 4112,
+      "output": 1859,
+      "total": 5971
+    },
+    "agent_selected_best": {
+      "name": "official_pure_multitask_dcn_aux10",
+      "GAUC": 0.668099501313033,
+      "nDCG@5": 0.536645995765373,
+      "primary": 0.602372748539203
+    },
+    "highest_observed_primary": {
+      "name": "official_pure_multitask_dcn",
+      "primary": 0.6027321199507834
+    },
+    "final_submission_policy": "Retained the stronger validation-selected seed-averaged ensemble."
+  },
+  "selection_used_test_labels": false
+}

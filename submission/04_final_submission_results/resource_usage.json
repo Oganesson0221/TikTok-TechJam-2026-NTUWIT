@@ -1,0 +1,48 @@
+{
+  "llm_token_consumption": {
+    "status": "measured_from_openai_responses_api",
+    "model": "gpt-5-mini",
+    "decisions": 6,
+    "input_tokens": 4112,
+    "output_tokens": 1859,
+    "total_tokens": 5971,
+    "configured_max_total_tokens": 20000
+  },
+  "development_assistant_token_consumption": {
+    "status": "measured_from_codex_session_counter",
+    "input_tokens": 77496988,
+    "cached_input_tokens_included_above": 76481024,
+    "output_tokens": 216404,
+    "reasoning_output_tokens_included_above": 57392,
+    "total_tokens": 77713392,
+    "captured_from": "rollout-2026-08-31T18-42-17-01a05769-a85b-7df0-a103-3a5c04f894e9.jsonl"
+  },
+  "gpu_time": {
+    "gpu_hours": 0.7659081724769689,
+    "devices": [
+      "Apple MPS local accelerator",
+      "NSCC NVIDIA A100"
+    ],
+    "included_runs": [
+      "official_pure_deepfm",
+      "official_pure_dcn_bpr",
+      "kuairand_1k_hashed_fm",
+      "kuairand_1k_supplemental_metric_reproduction",
+      "official_pure_openai_agent",
+      "failed_nscc_openai_egress_preflight"
+    ],
+    "note": "Includes the failed 19-second NSCC allocation conservatively. FM/BPR, side-FM, LambdaRank, metric sweeps, and streaming smoke were CPU-only."
+  },
+  "cpu_wall_seconds": {
+    "official_pure_fm_bpr": 196.40745466700173,
+    "official_pure_lambdarank": 38.55838620799477,
+    "side_fm_item": 224.07601841600263,
+    "side_fm_full": 230.24008112499723,
+    "side_fm_context_seed0": 232.78117324999766,
+    "side_fm_base_seed1": 188.93889225000748,
+    "side_fm_base_seed2": 223.7858254169987,
+    "side_fm_context_seed1": 318.9399726249976,
+    "side_fm_context_seed2": 344.2862287500175
+  },
+  "captured_at_utc": "2026-08-31T14:08:05.021908+00:00"
+}

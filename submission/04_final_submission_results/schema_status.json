@@ -1,0 +1,17 @@
+{
+  "status": "valid",
+  "benchmark": "KuaiRand-Pure test",
+  "rows": 170588,
+  "expected_rows": 170588,
+  "columns": [
+    "row_id",
+    "user_id",
+    "video_id",
+    "score"
+  ],
+  "row_id_continuous_from_zero": true,
+  "all_scores_numeric_and_finite": true,
+  "test_outcome_columns_read": [],
+  "starter_kit_check": "passed: submit.py --check --split test",
+  "sha256": "06afca72693636b2e1f0115d8cdaefb05c049c5e3fb032649ce28c3f6f5dd50f"
+}
