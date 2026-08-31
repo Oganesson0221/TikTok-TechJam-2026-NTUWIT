@@ -1,484 +1,408 @@
-diff --git a/README.md b/README.md
-index 5d4814e..ecc6cb0 100644
---- a/README.md
-+++ b/README.md
-@@ -1,349 +1,125 @@
--# Autonomous Recommender Research Agent — data and model pipeline
-+# LoopRank — TikTok TechJam 2026
+diff --git a/docs/architecture.md b/docs/architecture.md
+index 07656f3..1a4475c 100644
+--- a/docs/architecture.md
++++ b/docs/architecture.md
+@@ -1,50 +1,55 @@
+-# System architecture
++# LoopRank system architecture
  
--This repository contains the reproducible KuaiRand-Pure data/baseline pipeline
--and configurable recommender-model component for the TikTok TechJam 2026
--challenge. It is designed to feed a stable JSON contract to the autonomous
--experiment controller.
-+Autonomous recommender-research pipeline for the official Starter Kit task:
-+predict `long_view` and rank logged candidates within each user. The official
-+metrics are GAUC and nDCG@5; the primary score is their mean.
+-This is a recommendation-ranking system. Its input is structured user, video
+-and impression context; its output is a click score and descending candidate
+-rank. It does not analyze media authenticity.
++LoopRank is an autonomous research and ranking system for the Starter Kit's
++KuaiRand `long_view` task. It consumes structured user/video impression rows
++and emits one ranking score per test row. It does not analyze video pixels,
++audio, factual claims, or authenticity.
  
--Submission materials: [`docs/devpost.md`](docs/devpost.md),
--[`docs/demo_script.md`](docs/demo_script.md),
--[`docs/pitch_deck.md`](docs/pitch_deck.md), and
--[`docs/submission_output.md`](docs/submission_output.md). Final submission
--steps are tracked in [`docs/submission_checklist.md`](docs/submission_checklist.md).
--The interactive research console and exact product-scope explanation are in
--[`docs/frontend.md`](docs/frontend.md). Checkpoint locations, checksums and the
--recommended sharing workflow are in
--[`docs/model_artifacts.md`](docs/model_artifacts.md).
-+## Submission-ready folders
+ ![Input and output scope](assets/system-scope.svg)
  
--## What is implemented
-+- `submission/03_run_iteration_logs/` — per-iteration hypotheses, code diffs,
-+  official validation metrics, errors/recoveries, and intervention count.
-+- `submission/04_final_submission_results/` — final Pure prediction CSV,
-+  ensemble checkpoints, results/deltas, schema validation, and resource usage.
+ ```mermaid
+ flowchart LR
+-    A[Official KuaiRand-Pure archive] --> B[MD5 verification and safe extraction]
+-    B --> C[Fixed train / validation / quarantined test split]
+-    C --> D[Leakage audit and manifest]
+-    D --> E[Feature encoder fit on train only]
+-    E --> F[MF / DeepFM / DCN / multi-task DCN]
+-    O[Structured model-driven policy] -->|metrics + failures| G[Bounded research agent]
+-    G -->|hypothesis + config diff| F
+-    F --> H[A100 training]
+-    H --> I[NDCG@10 + Recall@50]
+-    I --> G
+-    H --> J[Atomic validation-best checkpoint]
+-    G --> K[Convergence / walltime / experiment budget]
+-    G --> L[OOM, NaN and CUDA recovery]
+-    G --> M[Iteration JSONL + resource report]
+-    J --> N[Final selected model]
+-    M --> N
+-    N --> P[Label-blind ranked CSV + checksum]
++    A[Official KuaiRand data] --> B[Starter Kit date split]
++    B --> C[Train-only feature fitting]
++    C --> D[Bounded model candidates]
++    P[GPT-5 mini policy] -->|hypothesis + config diff| E[Research controller]
++    D --> E
++    E --> F[Train / recover]
++    F --> G[GAUC + nDCG at 5]
++    G -->|metrics + reflection| P
++    F --> H[Validation-best checkpoints]
++    E --> I[Iteration + token + recovery logs]
++    H --> J[Validation-only ensemble]
++    J --> K[Four-column test CSV]
++    K --> L[Schema + checksum verification]
+ ```
  
--- A common model interface and registry with biased matrix factorization,
--  DeepFM, DCN-v1, and a shared-bottom multi-task DCN trained on click plus
--  permitted long-view/like/follow feedback.
--- Training-only categorical vocabularies with an unknown bucket, so validation
--  values never leak into feature fitting.
--- Optional static user/video feature joins and temporal features (`hour`, day of
--  week, weekend).
--- Reproducible downsampling of _observed non-clicked impressions_. No unexposed
--  user-item pairs or external data are introduced.
--- Pointwise BCE, within-user BPR, and hybrid ranking/calibration objectives;
--  pairwise negatives are drawn only from each user's logged exposures.
--- YAML experiment configurations plus CLI overrides for controlled autonomous
--  experiments.
--- Early stopping on the mean of validation NDCG@10 and Recall@50, atomic
--  validation-best checkpoints, gradient clipping, finite-loss checks, and a
--  machine-readable `summary.json` history.
--- CPU, Apple MPS, and CUDA device selection.
--- Official archive download with published-MD5 verification, safe extraction,
--  fixed row-half splitting, split checksums, and a leakage audit manifest.
--- A one-command smoothed item-popularity baseline reporting both logged-candidate
--  and full-catalog metrics.
--- A result-driven OpenAI Responses API research policy with strict structured
--  decisions and exact token accounting, plus an offline queued policy for
--  reproducible cluster runs.
--- Label-blind ranked prediction export with a SHA-256 manifest, and optional
--  KuaiRand-1K preparation/training for bonus evaluation.
-+The required upload is
-+`submission/04_final_submission_results/files/kuairand_pure.csv`, with exact
-+columns `row_id,user_id,video_id,score` and 170,588 test rows.
+-## Safety boundaries
++## Autonomous control contract
  
--The code intentionally accepts only explicit `train.csv` and `validation.csv`
--inputs. It has no test-data argument, which helps enforce the rule that the
--hidden/test half is not accessed during model development.
--
--## Setup
--
--Python 3.10 or newer is required.
--
+-- The development API accepts only train and validation paths; it has no test
+-  argument.
+-- Categorical vocabularies are fit exclusively on training rows. Unseen
+-  validation categories map to a reserved unknown bucket.
+-- Only logged non-click impressions are used as negatives. No external data or
+-  synthetic unexposed pairs are introduced.
+-- The cumulative video-statistics file is excluded because it may contain
+-  future-derived aggregates.
+-- Checkpoints are written atomically and selected by validation metrics.
++The OpenAI policy receives the bounded candidate set plus prior hypotheses,
++metrics, errors, and recoveries. It returns a strict-schema decision and
++reflection; it cannot execute arbitrary generated code. The controller trains
++that candidate, records the exact diff and outcome, applies bounded recovery
++rules when necessary, and stops on convergence or budget.
+ 
+-## Autonomous control contract
++The official audit run completed six GPT-5 mini decisions with 5,971 measured
++API tokens and zero manual experiment interventions. Its best checkpoint is
++preserved even though the final validation-only ensemble scored higher.
++
++## Leakage and correctness boundaries
++
++- Features, categorical mappings, and history aggregates are fitted on
++  training data only.
++- Model and blend selection use validation only.
++- Prediction exporters read test identity/context columns but never test
++  outcomes.
++- Submission order is preserved exactly through a continuous zero-based
++  `row_id`.
++- Checkpoints are validation-best and the final ensemble recipe is explicit.
++- The required CSV is independently checked with the Starter Kit.
++
++## Evidence boundary
+ 
+-Each candidate is a bounded hypothesis with a configuration diff. In
+-model-driven mode, the policy reads previous metrics, errors, and recoveries and
+-selects the next candidate through a strict JSON schema; offline mode provides
+-a reproducible queue. The agent trains, evaluates, records the outcome, and
+-either advances, retries safely, or stops on convergence/budget. It does not
+-execute arbitrary generated code on the cluster. This makes the run
+-reproducible, inexpensive, and auditable.
++`submission/03_run_iteration_logs/` contains the complete agent audit.
++`submission/04_final_submission_results/` contains outputs, checkpoints,
++results/deltas, resource usage, schema proof, and artifact hashes.
+diff --git a/docs/assets/results.svg b/docs/assets/results.svg
+index faf2419..a1a4907 100644
+--- a/docs/assets/results.svg
++++ b/docs/assets/results.svg
+@@ -1,24 +1,28 @@
+ <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="600" viewBox="0 0 1080 600" role="img" aria-labelledby="title desc">
+-  <title id="title">KuaiRand-Pure validation NDCG at 10 progression</title>
+-  <desc id="desc">Successful internal validation results progress from item popularity at 0.817216 to the selected DCN seed 43 at 0.837940. The axis starts at 0.80.</desc>
++  <title id="title">KuaiRand-Pure official validation primary scores</title>
++  <desc id="desc">The published FM baseline primary score is 0.601600 and the final validation-only ensemble reaches 0.603591.</desc>
+   <rect width="1080" height="600" fill="#f5f3ed"/>
+   <rect x="40" y="40" width="1000" height="520" fill="#fffefa" stroke="#d8d5cc"/>
+-  <text x="82" y="94" fill="#aa2d1d" font-family="system-ui, sans-serif" font-size="13" font-weight="700" letter-spacing="2">KUARAND-PURE · VALIDATION</text>
+-  <text x="82" y="137" fill="#191917" font-family="Georgia, serif" font-size="34">NDCG@10 progression</text>
+-  <text x="82" y="163" fill="#686861" font-family="system-ui, sans-serif" font-size="13">Successful runs · logged candidate impressions · axis begins at 0.80</text>
++  <text x="82" y="94" fill="#aa2d1d" font-family="system-ui, sans-serif" font-size="13" font-weight="700" letter-spacing="2">KUAIRAND-PURE · STARTER KIT VALIDATION</text>
++  <text x="82" y="137" fill="#191917" font-family="Georgia, serif" font-size="34">Primary score comparison</text>
++  <text x="82" y="163" fill="#686861" font-family="system-ui, sans-serif" font-size="13">Primary = mean of positive-weighted GAUC and mean nDCG@5 · axis begins at 0.59</text>
+   <g stroke="#dedbd2" stroke-width="1">
+-    <line x1="330" y1="194" x2="330" y2="500"/><line x1="495" y1="194" x2="495" y2="500"/><line x1="660" y1="194" x2="660" y2="500"/><line x1="825" y1="194" x2="825" y2="500"/><line x1="990" y1="194" x2="990" y2="500"/>
++    <line x1="330" y1="194" x2="330" y2="480"/><line x1="550" y1="194" x2="550" y2="480"/><line x1="770" y1="194" x2="770" y2="480"/><line x1="990" y1="194" x2="990" y2="480"/>
+   </g>
+   <g fill="#686861" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">
+-    <text x="330" y="526">0.80</text><text x="495" y="526">0.81</text><text x="660" y="526">0.82</text><text x="825" y="526">0.83</text><text x="990" y="526">0.84</text>
++    <text x="330" y="510">0.590</text><text x="550" y="510">0.595</text><text x="770" y="510">0.600</text><text x="990" y="510">0.605</text>
+   </g>
+   <g fill="#34342f" font-family="system-ui, sans-serif" font-size="13" text-anchor="end">
+-    <text x="310" y="229">Item popularity</text><text x="310" y="281">Matrix factorization</text><text x="310" y="333">DeepFM · side features</text><text x="310" y="385">DeepFM · all exposures</text><text x="310" y="437">DCN · seed 42</text><text x="310" y="489" font-weight="700">DCN · seed 43</text>
++    <text x="310" y="239">DeepFM</text><text x="310" y="309">Reproduced FM</text><text x="310" y="379">Official FM baseline</text><text x="310" y="449" font-weight="700">Final ensemble</text>
+   </g>
+   <g>
+-    <rect x="330" y="212" width="284" height="22" fill="#a9a69e"/><rect x="330" y="264" width="310" height="22" fill="#a9a69e"/><rect x="330" y="316" width="543" height="22" fill="#25344a"/><rect x="330" y="368" width="557" height="22" fill="#25344a"/><rect x="330" y="420" width="620" height="22" fill="#25344a"/><rect x="330" y="472" width="626" height="22" fill="#e34a32"/>
++    <rect x="330" y="222" width="319" height="26" fill="#a9a69e"/>
++    <rect x="330" y="292" width="505" height="26" fill="#25344a"/>
++    <rect x="330" y="362" width="510" height="26" fill="#25344a"/>
++    <rect x="330" y="432" width="598" height="26" fill="#e34a32"/>
+   </g>
+   <g fill="#191917" font-family="ui-monospace, SFMono-Regular, monospace" font-size="12" font-weight="700">
+-    <text x="624" y="228">0.817216</text><text x="650" y="280">0.818786</text><text x="883" y="332">0.832888</text><text x="897" y="384">0.833730</text><text x="960" y="436">0.837561</text><text x="966" y="488">0.837940</text>
++    <text x="659" y="240">0.597241</text><text x="845" y="310">0.601469</text><text x="850" y="380">0.601600</text><text x="938" y="450">0.603591</text>
+   </g>
++  <text x="82" y="540" fill="#686861" font-family="system-ui, sans-serif" font-size="12">Final absolute improvement over published baseline: +0.001991</text>
+ </svg>
+diff --git a/docs/assets/system-scope.svg b/docs/assets/system-scope.svg
+index c28c434..0b28f04 100644
+--- a/docs/assets/system-scope.svg
++++ b/docs/assets/system-scope.svg
+@@ -1,6 +1,6 @@
+ <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="360" viewBox="0 0 1080 360" role="img" aria-labelledby="title desc">
+   <title id="title">LoopRank input and output scope</title>
+-  <desc id="desc">Structured user, candidate video, and context features enter a click scoring model that returns scores and ranked candidate video IDs. The system does not detect fake videos.</desc>
++  <desc id="desc">Structured user, candidate video, and context features enter a long-view ranking model that returns scores and ranked candidate video IDs. The system does not detect fake videos.</desc>
+   <rect width="1080" height="360" fill="#f5f3ed"/>
+   <g font-family="system-ui, sans-serif">
+     <rect x="40" y="55" width="250" height="250" fill="#fffefa" stroke="#d8d5cc"/>
+@@ -11,9 +11,9 @@
+     <text x="70" y="237" fill="#686861" font-size="14">Feed + time context</text>
+     <text x="330" y="189" fill="#e34a32" font-family="Georgia, serif" font-size="34">→</text>
+     <rect x="385" y="92" width="310" height="176" fill="#25344a"/>
+-    <text x="425" y="131" fill="#f8dfd8" font-size="11" font-weight="700" letter-spacing="1.5">DCN RANKER</text>
+-    <text x="425" y="181" fill="#ffffff" font-family="Georgia, serif" font-size="25">ClickScore(user, item, context)</text>
+-    <text x="425" y="220" fill="#bdc4ce" font-size="13">Embeddings · crosses · deep tower</text>
++    <text x="425" y="131" fill="#f8dfd8" font-size="11" font-weight="700" letter-spacing="1.5">ENSEMBLE RANKER</text>
++    <text x="425" y="181" fill="#ffffff" font-family="Georgia, serif" font-size="25">LongViewScore(user, item)</text>
++    <text x="425" y="220" fill="#bdc4ce" font-size="13">FM · DeepFM · context-FM</text>
+     <text x="735" y="189" fill="#e34a32" font-family="Georgia, serif" font-size="34">→</text>
+     <rect x="790" y="55" width="250" height="250" fill="#191917"/>
+     <text x="820" y="91" fill="#f8dfd8" font-size="11" font-weight="700" letter-spacing="1.5">RANKED OUTPUT</text>
+diff --git a/docs/baseline_contract.md b/docs/baseline_contract.md
+index de5224c..da4d7a9 100644
+--- a/docs/baseline_contract.md
++++ b/docs/baseline_contract.md
+@@ -1,62 +1,43 @@
+-# Baseline and evaluation contract
++# Official baseline and evaluation contract
+ 
+-## What can be reproduced now
++## Starter Kit protocol
+ 
+-The challenge text fixes the label (`is_click`) and reports NDCG@10 and
+-Recall@50. This repository therefore provides two reproducible controls:
++- Benchmark: KuaiRand-Pure.
++- Prediction target: `long_view`.
++- Training dates: 8–21 April 2022.
++- Validation dates: 22–28 April 2022.
++- Test dates: 29 April–8 May 2022.
++- Metrics: positive-weighted within-user GAUC and mean within-user nDCG@5.
++- Primary score: arithmetic mean of GAUC and nDCG@5.
++- Submission schema: `row_id,user_id,video_id,score`.
+ 
+-1. `run-kuairand-baseline`: smoothed item click-through rate, requiring no GPU.
+-2. `configs/mf_baseline.yaml`: a trainable ID-embedding baseline with early
+-   stopping and validation-best checkpointing.
++The repository implementation follows this executable contract. Earlier
++click-oriented experiments are not used for model selection or submission.
+ 
+-Both train exclusively on `log_standard_4_08_to_4_21_pure.csv` and evaluate on
+-the first row-half of `log_standard_4_22_to_5_08_pure.csv`. The last row-half is
+-prepared but never accepted by the development training API.
++## Published baseline and reproduced comparison
+ 
+-## Why this is not labelled an exact CWM score reproduction
++| Model | GAUC | nDCG@5 | Primary |
++|---|---:|---:|---:|
++| Official FM baseline | 0.667400 | 0.535700 | 0.601600 |
++| Locally reproduced FM | 0.667133 | 0.535805 | 0.601469 |
++| Final validation-only ensemble | **0.669983** | **0.537199** | **0.603591** |
+ 
+-The public CWM repository optimizes watch-time/counterfactual-watch-time labels.
+-Its evaluator reports long-view NDCG, watch-time precision, AUC, MRR, and related
+-metrics. It does not expose this challenge's stated `is_click` + Recall@50
+-command or an organizer baseline score. Calling an unmodified upstream CWM run
+-an exact reproduction would therefore be misleading.
++Absolute final-over-official deltas are +0.002583 GAUC, +0.001499 nDCG@5,
++and +0.001991 primary.
+ 
+-We audited upstream CWM commit `c36da4ba745a491545490be1b2b976180ab69c87`.
+-Its evaluator ranks observed rows within each `user_id`, matching this
+-repository's logged-impression grouping, but it does not implement the
+-challenge's click + Recall@50 reference score. The machine-readable audit and
+-source URLs are in `reports/official_source_audit.json`.
++## Supplemental portal metrics
+ 
+-The DeepFM and DCN implementations here retain the backbone families used in
+-CWM while changing the objective to binary click prediction. Once the event's
+-starter evaluation script, submission schema, and numeric reference scores are
+-available, place them in the repository and compare with:
++The portal also requests NDCG@10 and Recall@50. On the same Pure validation
++predictions, the final ensemble scores 0.812924 NDCG@10 and 0.999979 Recall@50.
++These are reported separately because they are not substitutes for the Starter
++Kit's executable GAUC/nDCG@5 protocol. Recall@50 is almost saturated because
++99.9166% of evaluated Pure users have no more than 50 candidates.
+ 
 -```bash
--python -m venv .venv
--source .venv/bin/activate
--pip install -e '.[dev]'
+-run-kuairand-baseline \
+-  --official-ndcg <NDCG_AT_10> \
+-  --official-recall <RECALL_AT_50>
 -```
++The completed 1K bonus result is 0.647500 GAUC, 0.571905 nDCG@5, 0.609702
++primary, 0.562493 NDCG@10, and 0.096342 Recall@50.
+ 
+-## Evaluation protocol warning
++## Interpretation boundary
+ 
+-The fast baseline reports two protocols:
 -
--Download, checksum, extract, split, and audit the official KuaiRand-Pure archive:
+-- `validation_metrics`: ranks only logged validation impressions per user.
+-- `full_catalog_validation_metrics`: ranks all 7,583 items from the official
+-  static item table and treats unique clicked validation items as relevant.
 -
--```bash
--prepare-kuairand --download
--```
+-The former can make Recall@50 nearly one because many users have fewer than 50
+-logged candidates. Training summaries now report median and p95 candidate
+-counts plus the fraction of evaluated users at or below K, making that
+-saturation measurable rather than implicit. The latter is much harder. Neither should be called the
+-official competition score until compared against the organizer-provided
+-evaluation script.
 -
--The archive is verified against the MD5 published by KuaiRand. The resulting
--directory is ignored by Git:
+-## Split audit
 -
--```text
--data/
--├── downloads/KuaiRand-Pure.tar.gz
--├── raw/KuaiRand-Pure/...
--└── prepared/
--    ├── train.csv
--    ├── validation.csv
--    ├── test.csv
--    ├── user_features_pure.csv
--    ├── video_features_basic_pure.csv
--    └── manifest.json
--```
--
--Prepared `train.csv` and `validation.csv` contain `user_id`, `video_id`, and
--`is_click`. The feature presets also expect `tab` in the interaction logs and
--the named columns from the official static user/video tables. Adjust
--`categorical_features` if Member 1's prepared tables differ.
--
--## Run experiments
--
--Run the complete data-preparation and CPU item-popularity baseline with one
--command:
--
+-The instruction says to use the first and last 50% of the later standard log.
+-The source file is not globally ordered by `time_ms`, so those halves overlap in
+-date/time. The pipeline follows the literal row-half rule and records
+-`temporal_half_overlap: true` in `data/prepared/manifest.json`; it does not sort
+-the file and silently alter organizer-defined membership.
++All reported scores are validation results, not hidden-test or leaderboard
++scores. The test exports are label-blind and are checked for row alignment,
++schema, and finite scores only.
+diff --git a/docs/demo_script.md b/docs/demo_script.md
+index 683b3e0..8d2fa8d 100644
+--- a/docs/demo_script.md
++++ b/docs/demo_script.md
+@@ -1,86 +1,61 @@
+-# Three-minute demo script
++# Three-minute final demo script
+ 
+-## 0:00–0:30 — Problem and architecture
++## 0:00–0:30 — Problem and product
+ 
+-Open the frontend Overview tab and select one of the three fictional personas.
+-Clarify that the task ranks candidate videos by click likelihood—it does not
+-detect fake videos. Show the persona's actual ranked export, then switch to
+-`docs/architecture.md`. Explain that the goal is not one hard-coded model;
+-it is an auditable research loop that proposes controlled experiments, trains,
+-evaluates, reflects, and recovers.
++Open the frontend. Introduce LoopRank as an autonomous recommender-research
++agent for the Starter Kit's KuaiRand `long_view` ranking task. Point to the
++contract card: GAUC and nDCG@5, averaged into the primary score. Clarify that
++the system ranks structured candidate impressions; it is not a fake-video
++detector.
+ 
+-## 0:30–1:00 — Reproducible data and baseline
++## 0:30–1:05 — Auditable agent loop
+ 
+-Run or show:
++Open `docs/architecture.md`, then
++`submission/03_run_iteration_logs/openai_agent_iterations.jsonl`. Show that
++each entry contains a hypothesis, bounded diff, decision source, rationale,
++reflection, official metrics, errors/recoveries, and token usage.
+ 
 -```bash
 -run-kuairand-baseline --download
 -```
--
--It writes `artifacts/baselines/item_popularity/{model.csv,summary.json}` and
--prints both logged-impression and full-catalog validation metrics. See
--[`docs/baseline_contract.md`](docs/baseline_contract.md) before comparing these
--numbers with an organizer score: the public CWM task and the stated TechJam
--click task are not identical.
--
--Start with the cheap ID-only control:
-+The 1K prediction CSV and its checkpoint exceed GitHub's ordinary file-size
-+limit and are tracked with Git LFS. Before committing or cloning all submission
-+artifacts, run:
++State: the OpenAI run completed 6/6 decisions with GPT-5 mini, consumed 5,971
++API tokens, stopped on convergence, and required zero manual interventions.
  
- ```bash
--train-recommender --config configs/mf_baseline.yaml
-+git lfs install
- ```
+-Open `data/prepared/manifest.json` and point out archive MD5, exact row counts,
+-split hashes, feature files, and the excluded future-statistics file.
++## 1:05–1:35 — Error recovery
  
--Then run the two meaningful architecture/feature experiments:
--
--```bash
--train-recommender --config configs/deepfm_features.yaml
--train-recommender --config configs/dcn_features.yaml
--```
--
--Run the complete bounded autonomous sweep:
--
--```bash
--run-research-agent --config configs/agent.yaml
--```
-+## Current required-benchmark result
+-## 1:00–1:40 — Autonomous experiments
++Open `openai_agent_recovery.json` and the relevant iteration records. Explain
++that NSCC compute nodes blocked outbound OpenAI calls. The failure was logged;
++the exact bounded OpenAI configuration was then executed where API egress was
++available. No queued fallback was used and no human selected an experiment.
  
--For model-driven selection, install the agent extra, configure credentials in
--the environment (never the repository), and use the example OpenAI policy:
-+| KuaiRand-Pure validation model | GAUC | nDCG@5 | Primary |
-+|---|---:|---:|---:|
-+| Official FM baseline (published) | 0.667400 | 0.535700 | 0.601600 |
-+| FM reproduced locally | 0.667133 | 0.535805 | 0.601469 |
-+| DeepFM | 0.661683 | 0.532799 | 0.597241 |
-+| Seed-averaged FM/DeepFM/context-FM ensemble | **0.669983** | **0.537199** | **0.603591** |
+-Show `configs/nscc_agent.json`, then:
++Mention the broader run evidence: 14 automated recovery events, including
++dependency, grouping, schema, and infrastructure handling.
  
 -```bash
--pip install -e '.[agent]'
--export OPENAI_API_KEY=...
--export OPENAI_MODEL=...
--run-research-agent --config configs/nscc_hardened_sweep_openai.example.json
+-run-research-agent --config configs/agent.yaml --smoke
 -```
-+The ensemble weights were selected using validation only. Test outcome columns
-+are never requested by the prediction exporters.
++## 1:35–2:10 — Final results
  
--The model sees prior metrics, errors, recoveries, hypotheses, and bounded
--configuration diffs, then selects the next experiment using a strict JSON
--schema. Every decision records its rationale, reflection, source, and token use.
-+The portal-requested supplemental metrics are **NDCG@10 0.812924** and
-+**Recall@50 0.999979**. They are kept separate from the executable Starter Kit
-+score; Recall@50 is nearly saturated because almost every Pure validation user
-+has at most 50 candidates.
+-Open `reports/nscc_iterations.jsonl` and highlight the hypothesis, configuration
+-change, metrics, runtime and checkpoint for each iteration.
++Open the frontend results section:
  
--Replay one real, tightly cost-bounded decision over the completed experiment
--history without retraining or exposing hidden labels:
-+The completed KuaiRand-1K A100 bonus run reached **0.647500 GAUC / 0.571905
-+nDCG@5 / 0.609702 primary**, with supplemental **0.562493 NDCG@10 /
-+0.096342 Recall@50**, and produced 4,132,081 aligned test scores.
+-Show `src/research_rec/research_policy.py`: model-driven mode reads the prior
+-metrics/errors and selects the next bounded experiment with a strict JSON
+-schema; queued mode makes the same execution path reproducible without cluster
+-API credentials.
++- official FM baseline: 0.601600 primary;
++- final ensemble: 0.669983 GAUC, 0.537199 nDCG@5, 0.603591 primary;
++- absolute primary improvement: +0.001991;
++- supplemental portal metrics: 0.812924 NDCG@10 and 0.999979 Recall@50.
  
--```bash
--set -a; source .env; set +a
--PYTHONPATH=src python scripts/run_openai_policy_audit.py
--```
-+## Completed OpenAI autonomous-agent run
+-## 1:40–2:15 — Failure recovery
++Explain that the autonomous run's best checkpoint reached 0.602373 primary,
++but the stronger validation-only ensemble remains the final model.
  
--The recorded GPT-5 mini decision is in
--`reports/openai_policy_decision.json`; `.env` is excluded from both Git and
--NSCC synchronization.
-+The official Pure agent completed **6/6 experiments** with every decision made
-+by `gpt-5-mini`; no queued fallback was used. It consumed **4,112 input + 1,859
-+output = 5,971 API tokens**, stopped on convergence, and required **0 manual
-+interventions**. Its selected checkpoint was multitask DCN with auxiliary weight
-+0.1 at **0.668100 GAUC / 0.536646 nDCG@5 / 0.602373 primary**. Because the
-+seed-averaged ensemble remained stronger, the agent result is retained as the
-+autonomy audit and checkpoint rather than replacing the final prediction file.
+-Show the `dcn_side_neg4_retry` line. Explain:
++## 2:10–2:35 — Bonus and resource use
  
--For a fast integration check, add `--smoke`. The real-data smoke sweep completes
--six experiments with zero interventions and writes structured iteration,
--recovery, resource, and convergence logs under `artifacts/agent_run/`.
-+The first NSCC launch exposed blocked API egress on compute nodes. That failure
-+and the successful recovery to the identical local OpenAI-mode configuration
-+are recorded in `submission/03_run_iteration_logs/`.
+-1. CUDA returned `CUBLAS_STATUS_NOT_INITIALIZED`.
+-2. The agent classified it as recoverable.
+-3. Batch size changed from 2048 to 1024 and CUDA cache was cleared.
+-4. Retry succeeded without manual intervention and informed the final bounded
+-   learning-rate sweep.
++Show the KuaiRand-1K card: 0.647500 GAUC, 0.571905 nDCG@5, 0.609702 primary,
++and 4,132,081 aligned output rows. Then show `resource_usage.json`: 0.765908
++GPU-hours and 5,971 OpenAI API tokens for the completed autonomous run.
  
--The autonomous agent can change bounded settings without editing code:
-+## Setup and verification
+-## 2:15–2:45 — Results and cost
++## 2:35–3:00 — Submission proof
  
- ```bash
--train-recommender --config configs/deepfm_features.yaml \
--  --set training.learning_rate=0.0005 \
--  --set data.negative_ratio=8 \
--  --set training.experiment_name=deepfm_lr5e4_neg8
--```
--
--Each run writes:
--
--```text
--artifacts/checkpoints/<experiment_name>/
--├── best.pt       # validation-best weights, config, vocabulary, and metrics
--└── summary.json  # complete epoch history and final best-checkpoint metrics
--```
--
--Model weights and generated prediction files are intentionally excluded by
--the repository's `artifacts/` ignore rule. They remain available on the machine
--that ran or downloaded them; see [`docs/model_artifacts.md`](docs/model_artifacts.md)
--for the exact local paths and SHA-256 checksums of the selected models.
--
--The CLI also prints the same JSON summary to standard output for Member 3's
--agent controller. NDCG and Recall are macro-averaged over validation users with
--at least one clicked impression.
--
--Export a final ranked file without reading outcome labels:
+-Open the frontend Results tab and show the NDCG progression graph, then open
+-`reports/nscc_results.json`. Show the model progression and total PBS GPU
+-hours. The final DCN reached NDCG@10 0.837940 with batch size 1024, learning
+-rate 0.0005, and seed 43. Its ceiling was 80 epochs; it stopped after 12 and
+-restored epoch 2. The seed-42 control reached 0.837561. Emphasize validation-best
+-checkpointing rather than treating later epochs as automatically better.
++Open `submission/04_final_submission_results/`:
+ 
+-Open `reports/openai_policy_decision.json`. Show that the real GPT-5 mini
+-policy read 12 prior records, selected seed 44 for robustness, used 1,513 input
+-and 388 output tokens, and triggered a successful NSCC replication. Seed 44
+-scored 0.837006, producing a three-seed mean of 0.837502 without changing the
+-seed-43 winner.
++- `files/kuairand_pure.csv` has the exact four-column schema and 170,588 rows;
++- `schema_status.json` records the independent Starter Kit check;
++- `artifact_manifest.json` records checksums;
++- `checkpoints/ensemble.json` records the final blend;
++- the large 1K output/checkpoint are Git LFS objects.
+ 
+-Run or show the completed label-blind output:
 -
 -```bash
--export-recommendations \
--  --checkpoint artifacts/checkpoints/<winner>/best.pt \
+-export-recommendations --checkpoint artifacts/checkpoints/dcn_long_schedule_seed43/best.pt \
 -  --input-csv data/prepared/test.csv \
--  --output-csv artifacts/submissions/kuairand_pure_top50.csv \
--  --top-k 50 \
--  --column-map configs/submission_column_map.example.json
-+python3 -m venv .venv
-+source .venv/bin/activate
-+pip install -e '.[dev,official,agent]'
-+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest -q
- ```
- 
--The output columns are `user_id,video_id,score,rank`; a neighbouring
--`.meta.json` records its checksum and confirms that no label columns were read.
--The names can be mapped mechanically when the organizer publishes its exact
--schema.
--
--## Verified local results
--
--The checked-in summary is in `reports/baseline_results.json`. On an 8 GB Apple
--M2 MacBook Air:
--
--| Model                               | Protocol                |      NDCG@10 | Recall@50 | Runtime |
--| ----------------------------------- | ----------------------- | -----------: | --------: | ------: |
--| Item popularity                     | Logged impressions      |     0.817216 |  0.999867 |   1.7 s |
--| Item popularity                     | Full 7,583-item catalog |     0.002785 |  0.021216 |   1.7 s |
--| Matrix factorization                | Logged impressions      |     0.818786 |  0.999878 |  97.6 s |
--| DeepFM, all logged negatives (A100) | Logged impressions      |     0.833730 |  0.999921 |  58.8 s |
--| DCN, long-schedule seed 43 (A100)   | Logged impressions      | **0.837940** |  0.999918 | 101.9 s |
--
--![Logged-impression validation NDCG comparison](docs/assets/results.svg)
--
--The MF run stopped after 9 epochs and restored epoch 5. The NSCC sweep,
--targeted tuning, hardened Pure sweeps, and OpenAI-selected third-seed
--replication used 0.56667 PBS GPU-hours. The final
--DCN used an 80-epoch ceiling, completed 12 epochs, and restored its
--validation-best epoch 2 checkpoint. Seeds 42, 43, and 44 averaged 0.837502
--NDCG@10 with a 0.000934 range, so seed sensitivity is reported rather than
--hidden. GPT-5 mini selected seed 44 after reading 12 completed records; its
--successful decision cost an estimated $0.001154 and the resulting model scored
--0.837006. Detailed jobs, recovery, and
--resource figures are in `reports/nscc_results.json`, with public iteration logs
--in `reports/nscc_iterations.jsonl`. These are pipeline
--verification results, not official leaderboard claims; the supplied challenge
--text does not include the organizer evaluator or numeric CWM reference score.
--Against the explicitly labelled internal popularity control, the final NDCG
--gain is 0.020724 (2.54% relative); this is not presented as the missing official
--CWM delta.
--
--The optional KuaiRand-1K benchmark is also complete. Unlike the Pure logged
--split, its median validation user has 4,682 candidates, no evaluated user has
--50 or fewer, and Recall@50 is therefore discriminating. The side-feature
--multi-task DCN reached **0.690004 NDCG@10 / 0.030152 Recall@50**, improving on
--the strongest 1K ID/context control (0.667391 / 0.029048). It had a 30-epoch
--ceiling, stopped after 6, and recovered automatically from two CUDA BLAS
--initialization failures by reducing batch size to 1024.
--
--## Recommended experiment sequence
--
--1. `mf_baseline`: confirms the data/metric hand-off with the cheapest model.
--2. `deepfm_features_neg4`: tests ID, context, static side, temporal, and
--   second-order feature interactions together.
--3. `dcn_features_neg4`: tests explicit high-order crosses on the same features.
--4. For the better architecture, compare `negative_ratio` values `null`, `8`,
--   and `4`; then tune embedding dimension (`16`, `32`) and learning rate.
--
--Only change one factor per run so the agent's reflection log has a defensible
--causal hypothesis. Select the final checkpoint by the configured validation
--score, never by the held-out test result.
--
--## Test
-+Prepare the date-based official Pure splits from the Starter Kit data:
- 
- ```bash
--PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest -q
-+PYTHONPATH=src python3 -m research_rec.official_prepare_cli \
-+  --data-dir data/raw/KuaiRand-Pure/data \
-+  --output-dir data/official_pure \
-+  --variant pure
- ```
- 
--The tests cover feature leakage protection, temporal transforms, logged-negative
--sampling, ranking metrics, multi-task training, result-driven policy selection,
--prediction export, every model's forward/backward pass, and a complete
--training/checkpoint smoke run. Disabling plugin autoload avoids interference from
--unrelated pytest plugins installed in a shared Python environment; it is optional
--inside a clean virtual environment.
-+The fixed split periods are train 2022-04-08 through 2022-04-21,
-+validation 2022-04-22 through 2022-04-28, and test 2022-04-29 through
-+2022-05-08.
- 
--## Frontend demo
--
--This system ranks candidate videos by predicted click likelihood; it is not a
--fake-video detector. The frontend includes three fictional personas backed by
--anonymized KuaiRand users, real ranked candidates, content metadata,
--relative-position explanations, the experiment workflow, and successful-result
--graphs.
--
--### Full local demo with the ranking API
--
--From the repository root, install the package and start the server:
-+Reproduce every Pure component, rebuild the frozen validation-selected
-+ensemble, populate the submission folder, and run the independent checker:
- 
- ```bash
--python -m venv .venv
--source .venv/bin/activate
--pip install -e .
--serve-research-console --port 8080
-+scripts/reproduce_official_pure.sh
- ```
- 
--Then open [http://127.0.0.1:8080](http://127.0.0.1:8080). The server reads
--`artifacts/submissions/kuairand_pure_scores.csv` and exposes:
-+This is a full training run. For a quick verification of the included
-+artifacts, run the test command above and the Starter Kit check shown in
-+`docs/submission_output.md`.
- 
--```text
--GET /api/health
--GET /api/sample-users
--GET /api/rank?user_id=26469&limit=8
+-  --output-csv artifacts/submissions/kuairand_pure_top50.csv --top-k 50
 -```
 -
--If the console script is not installed, the equivalent development command is:
+-Open `reports/submission_artifacts.json` and point out the row count, SHA-256,
+-and `label_columns_read: []`.
 -
--```bash
--PYTHONPATH=src python -m research_rec.demo_server --port 8080
--```
-+## KuaiRand-1K bonus run
- 
--### Static-only demo
-+The streaming hashed-FM implementation is in `src/research_rec/large_scale.py`.
-+It trains CSV chunks without loading the full corpus into memory, evaluates
-+both reported metric pairs, and writes the exact Starter Kit schema.
- 
--The static frontend does not need PyTorch, a checkpoint, or an API key. It uses
--embedded examples copied from the verified prediction export:
-+NSCC access intentionally uses an interactive SSH master session so passwords
-+never enter commands, logs, or repository files:
- 
- ```bash
--python -m http.server 8080 --directory .
-+scripts/nscc_login.sh              # one password prompt; session backgrounds
-+scripts/nscc_sync.sh
-+scripts/nscc_submit.sh official-1k
-+scripts/nscc_status.sh
-+scripts/nscc_fetch_official_1k.sh
- ```
- 
--Open [http://127.0.0.1:8080/frontend/](http://127.0.0.1:8080/frontend/).
--Persona selection, explanations, navigation and graphs continue to work; users
--outside the three embedded personas require the full local server.
-+The login also transfers OPENAI_API_KEY from the ignored local .env through
-+encrypted SSH into a mode-600 remote file. The value is never synced, printed,
-+or committed. `scripts/nscc_shell.sh` automatically loads it into the remote
-+interactive environment; PBS jobs load the same protected file.
- 
--This static mode is suitable for Vercel. It demonstrates verified model output
--but does not claim that Vercel is executing the local PyTorch checkpoints. See
--[`docs/frontend.md`](docs/frontend.md) for the complete interface and model-
--scope contract.
-+The submission includes only completed, fetched, and measured benchmark runs.
- 
--## NSCC A100 execution
+-Then show `reports/bonus_1k_results.json`: the 1K side-feature DCN reaches
+-0.690004 NDCG@10 / 0.030152 Recall@50 across a median 4,682 candidates per user,
+-and its structured log shows two automatic CUDA recoveries with no manual
+-training intervention.
 -
--The repository includes password-safe SSH socket reuse, selective data sync,
--scheduled native-PyTorch validation, PBS submission, monitoring, and result retrieval. Follow
--[`docs/nscc.md`](docs/nscc.md). The full autonomous job is submitted with:
+-## 2:45–3:00 — Honest limitations
 -
--```bash
--scripts/nscc_submit.sh agent
--scripts/nscc_submit.sh hardened-sweep
--```
--
--The optional KuaiRand-1K bonus path is fully scheduled:
-+## Demo
- 
- ```bash
--scripts/nscc_submit.sh bonus-prepare
--scripts/nscc_submit.sh bonus-sweep
--scripts/nscc_submit.sh bonus-side-sweep
--scripts/nscc_submit.sh bonus-export kuairand_1k_side_multitask
-+PYTHONPATH=src python3 -m research_rec.demo_server
- ```
- 
--## contribution integration
--
--The Member 1 data preparation and baseline implementation are included here.
--Exact official metric parity remains pending the organizer's evaluator and
--reference scores. `reports/official_source_audit.json` records the authoritative
--sources checked and the missing artifacts rather than inventing an official
--delta. Member 3 should invoke this CLI and consume its JSON output.
--Member 4 can copy `summary.json` into iteration logs and compute GPU-hours from
--the reported elapsed time plus the selected device. The raw dataset,
--checkpoints, and credentials must remain uncommitted.
--
--## Authoritative sources
--
--- [TikTok TechJam 2026 submission requirements](https://tiktoktechjam2026.devpost.com/)
--- [KuaiRand dataset documentation and published checksums](https://kuairand.com/)
--- [Official KuaiRand archives on Zenodo](https://zenodo.org/records/10439422)
--- [Upstream CWM implementation](https://github.com/hyz20/CWM)
--- [OpenAI Responses API reference](https://developers.openai.com/api/reference/cli/resources/responses/methods/create)
-+Open <http://127.0.0.1:8080>. The API reads the official four-column prediction
-+file and derives display ranks per user without modifying the submission.
-diff --git a/docs/architecture.md b/docs/architecture.md
-index 07656f3..9bcd4b7 100644
---- a/docs/architecture.md
-+++ b/docs/architecture.md
-@@ -1,5 +1,9 @@
- # System architecture
- 
-+> Historical click-task document: do not use for the TechJam hand-in. The
-+> authoritative implementation is in ../README.md; the official task is
-+> long_view with GAUC/nDCG@5.
-+
- This is a recommendation-ranking system. Its input is structured user, video
- and impression context; its output is a click score and descending candidate
- rank. It does not analyze media authenticity.
-diff --git a/docs/baseline_contract.md b/docs/baseline_contract.md
-index de5224c..40a3b6f 100644
---- a/docs/baseline_contract.md
-+++ b/docs/baseline_contract.md
-@@ -1,5 +1,8 @@
- # Baseline and evaluation contract
- 
-+> Historical click-task document: do not use for submission. The Starter Kit
-+> establishes long_view, GAUC, nDCG@5, and date-based splits; see ../README.md.
-+
- ## What can be reproduced now
- 
- The challenge text fixes the label (`is_click`) and reports NDCG@10 and
-diff --git a/docs/demo_script.md b/docs/demo_script.md
-index 683b3e0..ad05369 100644
---- a/docs/demo_script.md
-+++ b/docs/demo_script.md
-@@ -1,5 +1,8 @@
- # Three-minute demo script
- 
-+> Historical script retained for provenance; its click/NDCG@10 claims are not
-+> submission results. Present the official values in devpost.md instead.
-+
- ## 0:00–0:30 — Problem and architecture
- 
- Open the frontend Overview tab and select one of the three fictional personas.
+-State that median candidates per user is 5 and 99.90% of evaluated users have
+-at most 50 candidates, so logged-impression Recall@50 is saturated. The
+-organizer evaluator was not supplied. Show `docs/baseline_contract.md`, which separates current
+-reproducible results from leaderboard claims and makes the evaluation adapter a
+-clear next integration point.
++Finish with: the package contains the model output, checkpoints, exact results,
++code diff, every iteration, all recoveries, resource accounting, and a zero
++manual-intervention summary.
 diff --git a/docs/devpost.md b/docs/devpost.md
-index 892e95c..153211a 100644
+index 892e95c..4ce06c6 100644
 --- a/docs/devpost.md
 +++ b/docs/devpost.md
-@@ -1,125 +1,99 @@
+@@ -1,125 +1,112 @@
 -# Devpost project description
 +# LoopRank
  
@@ -603,6 +527,11 @@ index 892e95c..153211a 100644
 +submission, while the agent checkpoint, rationales, reflections, and exact
 +token audit are included as autonomy evidence.
 +
++Total measured training/evaluation accelerator use was **0.765908 GPU-hours**,
++including the failed 19-second NSCC allocation. The OpenAI portion used **4,112
++input tokens and 1,859 output tokens**. Across the recorded research work there
++were 14 automated recovery events and no manual experiment interventions.
++
 +## Challenges and recoveries
 +
 +The supplied repository initially followed a different click/NDCG@10/
@@ -687,64 +616,464 @@ index 892e95c..153211a 100644
 +
 +Python, PyTorch, NumPy, pandas, LightGBM, PBS Pro, NSCC Aspire2A, HTML, CSS,
 +and JavaScript.
++
++## Reproducibility and submission artifacts
++
++`submission/03_run_iteration_logs/` contains the per-iteration hypotheses,
++diffs, official metrics, errors/recoveries, decisions, and intervention count.
++`submission/04_final_submission_results/` contains the required and bonus
++prediction files, checkpoints, result tables, schema check, hashes, and resource
++usage. The oversized KuaiRand-1K CSV/checkpoint are versioned with Git LFS.
 diff --git a/docs/frontend.md b/docs/frontend.md
-index ec8b1ea..5c53b98 100644
+index ec8b1ea..41c78e6 100644
 --- a/docs/frontend.md
 +++ b/docs/frontend.md
-@@ -1,5 +1,8 @@
+@@ -1,45 +1,33 @@
  # LoopRank frontend and demo
  
-+> Historical description. The current frontend and demo server use the
-+> official long_view, GAUC/nDCG@5, four-column submission.
-+
- ## Product scope
+-## Product scope
++The zero-build frontend under `frontend/` presents the final official results
++and an auditable view of the autonomous research loop.
  
- LoopRank is a short-video **recommendation ranker**, not a fake-video or
+-LoopRank is a short-video **recommendation ranker**, not a fake-video or
+-deepfake detector. It receives structured candidate-impression fields and
+-computes `ClickScore(user, video, context)`. It returns one bounded propensity
+-score per candidate and a descending rank for the user's feed. The score is not
+-presented as a calibrated real-world probability.
++## Scope
+ 
+-![Structured recommender input and output](assets/system-scope.svg)
+-
+-The system does not inspect pixels, audio, speech, factual claims, provenance,
+-or authenticity labels. A genuine fake-video detector would require a different
+-dataset, media encoders, authenticity labels, and suitable detection metrics.
+-
+-## Professional research console
++LoopRank predicts the Starter Kit's `long_view` outcome and ranks structured
++candidate impressions. It does not inspect media pixels/audio or claim to
++detect fake videos. Scores are ranking values, not calibrated real-world
++probabilities.
+ 
+-The zero-build frontend is under `frontend/`. It contains three tabs:
++![Structured recommender input and output](assets/system-scope.svg)
+ 
+-1. **Overview** — scope, exact inputs/outputs and a live ranked-output explorer.
+-2. **How it works** — the autonomous research and ranking workflow.
+-3. **Results** — successful benchmark results, resource figures and an
+-   accessible NDCG@10 graph.
++## Displayed evidence
+ 
+-Three fictional demo personas are mapped to anonymized real KuaiRand user IDs.
+-Their displayed activity, tenure and social ranges are fields consumed by the
+-selected checkpoint, and their tables use actual exported model scores. Names
+-are presentation aliases only; the UI does not infer real identity or private
+-preferences.
++The page shows:
+ 
+-Each ranked row includes the video fields used by the selected model—upload
+-type, video type, music type and author ID—plus a relative-position explanation.
+-For example, the first item is identified as the highest learned click fit in
+-that persona's candidate set, while later items state their score gap from the
+-leader. These are faithful descriptions of checkpoint inputs and ranking
+-position, not causal feature attributions: DCN feature interactions do not
+-provide a human-readable reason for an individual's true preference.
++- the exact GAUC/nDCG@5 benchmark contract;
++- the final 0.669983 GAUC, 0.537199 nDCG@5, 0.603591 primary result;
++- the +0.001991 absolute primary delta over the official baseline;
++- supplemental 0.812924 NDCG@10 and 0.999979 Recall@50;
++- six GPT-5 mini decisions, 5,971 API tokens, and zero interventions;
++- 0.765908 total GPU-hours;
++- the completed KuaiRand-1K result and included output/checkpoint.
+ 
+-## Run it
++The result values match the main README, Devpost draft, and final submission
++JSON/CSV records.
+ 
+-Install the package, then start the local server from the repository root:
++## Run locally
+ 
+ ```bash
+ pip install -e .
+@@ -48,23 +36,17 @@ serve-research-console --port 8080
+ 
+ Open `http://127.0.0.1:8080`. The server exposes:
+ 
+-- `GET /api/health` — task and service status;
+-- `GET /api/sample-users` — anonymized users with the largest candidate sets;
+-- `GET /api/rank?user_id=26469&limit=8` — actual label-blind ranked rows.
+-
+-The page also works as a static file with embedded verified examples. Starting
+-the server enables all users in the local Pure prediction export.
++- `GET /api/health`
++- `GET /api/sample-users`
++- `GET /api/rank?user_id=26469&limit=8`
+ 
+-## What verifies that the model works
++The page also works as a static site using embedded label-blind prediction
++examples. The dynamic server reads the final Pure export and does not expose
++outcome labels.
+ 
+-- The selected Pure checkpoint was freshly loaded and scored 2,000 rows on CPU.
+-- Every checked score was finite and within `[0, 1]`.
+-- Per-user ranks were in descending score order and scores were non-constant.
+-- The complete 1K export contains 3,328,531 valid scores for 490 users.
+-- Offline ranking improved from 0.817216 to 0.837940 NDCG@10 against the
+-  explicitly labelled internal popularity control.
+-- Three-seed evaluation reports a 0.837502 mean and 0.000934 range.
++## Submission verification
+ 
+-Machine-readable evidence is in `reports/model_verification.json`. These checks
+-establish executable scoring and offline ranking quality; they do not establish
+-an official hidden-test score or causal online lift.
++The required CSV has 170,588 aligned rows and passes the independent Starter
++Kit checker. All 23 repository tests pass. Machine-readable proof is in
++`submission/04_final_submission_results/schema_status.json` and
++`artifact_manifest.json`.
 diff --git a/docs/model_artifacts.md b/docs/model_artifacts.md
-index b838b92..c2fedbd 100644
+index b838b92..e813477 100644
 --- a/docs/model_artifacts.md
 +++ b/docs/model_artifacts.md
-@@ -1,5 +1,8 @@
- # Model artifacts
+@@ -1,35 +1,41 @@
+-# Model artifacts
++# Final model artifacts
  
-+> Historical click-task artifacts below are not submission checkpoints. Use
-+> submission/04_final_submission_results/checkpoints/ for the official model.
+-## Selected local checkpoints
++The authoritative artifacts are under
++`submission/04_final_submission_results/`.
+ 
+-| Role                         | Local path                                                 |   Size | SHA-256                                                            |
+-| ---------------------------- | ---------------------------------------------------------- | -----: | ------------------------------------------------------------------ |
+-| Primary KuaiRand-Pure winner | `artifacts/checkpoints/dcn_long_schedule_seed43/best.pt`   | 8.6 MB | `03ff13e3cd2939df6392a04dd356cb39aca36236289a185198caf1c196224436` |
+-| KuaiRand-1K bonus winner     | `artifacts/checkpoints/kuairand_1k_side_multitask/best.pt` | 597 MB | `eeef415e913694f415d530a8a3418f95d1428334c792c117b5a858485a3671cf` |
++## Required KuaiRand-Pure output
+ 
+-The primary winner is a DCN-v1 trained on KuaiRand-Pure. It completed 12 of an
+-80-epoch ceiling and restored validation-best epoch 2. Early stopping selecting
+-an early epoch is expected: later epochs did not improve the validation
+-selection score. The bonus winner is the side-feature multi-task DCN reported
+-for KuaiRand-1K.
++- Prediction file: `files/kuairand_pure.csv`
++- Rows: 170,588
++- Columns: `row_id,user_id,video_id,score`
++- SHA-256: `06afca72693636b2e1f0115d8cdaefb05c049c5e3fb032649ce28c3f6f5dd50f`
++- Reproducer: seven component checkpoints plus `checkpoints/ensemble.json`
+ 
+-## Local prediction exports
++The final blend is 55% three-seed FM average, 12.5% DeepFM, and 32.5%
++three-seed context-FM average. Its weights were selected on validation only.
+ 
+-- `artifacts/submissions/kuairand_pure_top50.csv`
+-- `artifacts/submissions/kuairand_pure_scores.csv`
+-- `artifacts/submissions/kuairand_1k_side_multitask_test_scores.csv`
++## OpenAI autonomy artifact
+ 
+-Their row counts and export checksums are recorded in
+-[`reports/submission_artifacts.json`](../reports/submission_artifacts.json).
+-These are generic label-blind ranked outputs; apply the organizer's exact
+-column mapping when its submission schema is available.
++`checkpoints/openai_agent_best.pt` is the validation-best checkpoint selected
++during the completed six-decision GPT-5 mini run. It reached 0.602373 primary.
++It is retained as autonomy evidence; it does not replace the stronger 0.603591
++final ensemble. Its exact decisions and token counts are in
++`submission/03_run_iteration_logs/openai_agent_iterations.jsonl`.
+ 
+-## Sharing or deploying
++## KuaiRand-1K bonus artifacts
+ 
+-The static frontend can be deployed without model weights because it contains
+-small, verified prediction examples. Full local inference additionally needs
+-the checkpoint and prepared data. For a judge or teammate, publish the two
+-checkpoints as GitHub Release assets, Git LFS objects, or private cloud-storage
+-downloads, then verify the SHA-256 values above. Do not remove the entire
+-`artifacts/` ignore rule merely to push generated outputs into ordinary Git
+-history.
++- Prediction file: `files/kuairand_1k.csv` (4,132,081 rows)
++- Checkpoint: `checkpoints/kuairand_1k_hashed_fm.pt`
 +
- ## Selected local checkpoints
++Both exceed GitHub's ordinary blob limit and are tracked with Git LFS. Run
++`git lfs install` before committing or cloning the complete artifact set.
++
++## Integrity and resource records
++
++- `artifact_manifest.json`: artifact paths, sizes, and SHA-256 values
++- `schema_status.json`: Pure schema/alignment verification
++- `results_table.csv` and `results_summary.json`: metrics and deltas
++- `resource_usage.json`: measured API tokens and GPU-hours
++
++Raw datasets, credentials, and NSCC secrets are not submission artifacts and
++must remain uncommitted.
+diff --git a/docs/nscc.md b/docs/nscc.md
+index 45eb6dd..b6178d6 100644
+--- a/docs/nscc.md
++++ b/docs/nscc.md
+@@ -1,5 +1,9 @@
+ # NSCC A100 workflow
  
- | Role                         | Local path                                                 |   Size | SHA-256                                                            |
++This workflow produced the completed KuaiRand-1K bonus run. Its final output
++and checkpoint are packaged under `submission/04_final_submission_results/`;
++the commands below remain the reproducibility path.
++
+ No password is stored in this repository. Authentication uses a temporary SSH
+ ControlMaster socket created by the user in their own Terminal.
+ 
 diff --git a/docs/pitch_deck.md b/docs/pitch_deck.md
-index d5c0efa..f513e68 100644
+index d5c0efa..8f657da 100644
 --- a/docs/pitch_deck.md
 +++ b/docs/pitch_deck.md
-@@ -1,5 +1,8 @@
- # Final pitch deck outline
- 
-+> Historical click-task deck. Do not present its NDCG@10/Recall@50 figures.
-+> Use devpost.md and the official submission folders for final claims.
-+
- ## Slide 1 — The bottleneck
+@@ -4,96 +4,99 @@
  
  **From repetitive recommender tuning to an auditable research agent**
+ 
+-MLEs repeatedly inspect, hypothesize, train, evaluate, and recover. Our system
+-turns that loop into a reproducible research process for KuaiRand rather than a
+-single notebook or one-off model.
++LoopRank automates the controlled research loop: hypothesize, apply a bounded
++configuration change, train, evaluate with the official protocol, recover,
++reflect, and stop on convergence.
+ 
+-## Slide 2 — End-to-end system
++## Slide 2 — Exact benchmark contract
+ 
+-Show the frontend's persona ranking, then `docs/architecture.md`, and walk through:
++- Target: `long_view` on KuaiRand-Pure.
++- Split: Starter Kit date ranges.
++- Official validation metrics: positive-weighted GAUC and mean nDCG@5.
++- Primary score: mean of GAUC and nDCG@5.
++- Test output: `row_id,user_id,video_id,score`, aligned to all 170,588 rows.
++- Test outcome columns are never read.
+ 
+-1. verified official dataset and leakage-safe splits;
+-2. train-only feature encoding;
+-3. MF, DeepFM, DCN, multi-task DCN, and pairwise objectives;
+-4. result-driven experiment selection;
+-5. A100 training, validation-best checkpointing, recovery, and export.
++## Slide 3 — Autonomous system
+ 
+-State the scope precisely: structured click ranking, not fake-video detection.
++Show `docs/architecture.md` and the frontend workflow:
+ 
+-## Slide 3 — What is autonomous
++1. verify and split the official data;
++2. build train-only features;
++3. let the OpenAI policy select one bounded candidate per iteration;
++4. train and measure the official metrics;
++5. record the hypothesis, diff, result, reflection, error, and recovery;
++6. retain validation-best checkpoints and stop on convergence.
+ 
+-- Each iteration has a hypothesis and exact configuration diff.
+-- The policy reads prior metrics, errors, and recoveries before selecting the
+-  next bounded experiment.
+-- It stops on convergence or wall-clock/experiment budget.
+-- OOM, non-finite loss, and CUDA initialization failures trigger structured
+-  recovery rather than ending the run.
+-- Decision source, reflection, LLM tokens, GPU-hours, and manual interventions
+-  are recorded.
++The completed OpenAI run made all **6/6 decisions with GPT-5 mini**, consumed
++**5,971 measured API tokens**, used no queued fallback, and required **zero
++manual interventions**.
+ 
+-## Slide 4 — Model research, not blind tuning
++## Slide 4 — Model research
+ 
+-- Static and temporal features capture user, item, context, and time.
+-- Logged-negative policies preserve the exposure distribution.
+-- Multi-task DCN tests transfer from long-view, like, and follow feedback.
+-- BPR/hybrid objectives optimize within-user clicked-over-non-clicked order.
+-- Larger epoch ceilings use schedulers and early stopping; later weights are
+-  never selected merely because they trained longer.
++The search covered the official FM baseline, DeepFM, DCN/BPR, FM/BPR,
++LambdaRank with train-only history, multi-task DCN, and validation-only
++ensembles. The final model is a seed-averaged blend of FM, DeepFM, and
++context-FM components; a weaker component is retained only when its errors are
++complementary on validation.
+ 
+-## Slide 5 — Evidence and recovery
++## Slide 5 — Required-benchmark result
+ 
+-Show `reports/nscc_iterations.jsonl`:
++| KuaiRand-Pure validation model | GAUC | nDCG@5 | Primary |
++|---|---:|---:|---:|
++| Official FM baseline | 0.667400 | 0.535700 | 0.601600 |
++| Reproduced FM | 0.667133 | 0.535805 | 0.601469 |
++| DeepFM | 0.661683 | 0.532799 | 0.597241 |
++| Final ensemble | **0.669983** | **0.537199** | **0.603591** |
+ 
+-- actual `CUBLAS_STATUS_NOT_INITIALIZED` failure;
+-- automatic batch-size reduction from 2048 to 1024;
+-- successful retry and subsequent controlled sweep;
+-- zero manual interventions inside the experiment controller.
++The final primary score is **+0.001991 absolute** over the published baseline.
++The portal-requested supplemental figures are **0.812924 NDCG@10** and
++**0.999979 Recall@50**; they are not substituted for the Starter Kit metrics.
+ 
+-## Slide 6 — Results, cost, and honest evaluation
++## Slide 6 — Recovery, cost, and autonomy evidence
+ 
+-Show the final results table from `README.md` and resource totals from
+-`reports/nscc_results.json`. Explain that candidate diagnostics found a median
+-of five logged candidates per user and 99.90% at or below Recall@50, which is
+-why Recall saturates. NDCG is the discriminating local metric.
++Show `submission/03_run_iteration_logs/` and
++`submission/04_final_submission_results/resource_usage.json`:
+ 
+-Contrast this with the completed KuaiRand-1K bonus result: median 4,682
+-candidates, zero users at or below 50, and 0.690004 NDCG@10 / 0.030152
+-Recall@50. Side features improve NDCG by 3.39% over the strongest 1K
+-ID/context control.
++- 14 automated recovery events and zero manual experiment interventions;
++- an NSCC OpenAI-egress failure recorded and recovered by running the same
++  bounded OpenAI configuration where API access was available;
++- 0.765908 GPU-hours total, including the failed 19-second allocation;
++- 4,112 API input tokens and 1,859 API output tokens.
+ 
+-Do not claim an official delta: the organizer numeric baseline/evaluator was
+-not present in the released materials. Show `reports/official_source_audit.json`
+-and the label-blind ranked export instead.
++Credential entry and key rotation are security actions, not experiment
++selection or recovery interventions.
+ 
+-## Slide 7 — Why it matters
++## Slide 7 — Bonus scale test
+ 
+-The deliverable is a reusable recommender R&D control plane:
++The completed KuaiRand-1K A100 run reached **0.647500 GAUC**, **0.571905
++nDCG@5**, and **0.609702 primary**, with supplemental **0.562493 NDCG@10** and
++**0.096342 Recall@50**. It exported 4,132,081 aligned test rows. The output and
++checkpoint are included through Git LFS.
+ 
+-- cheap, bounded experiments instead of open-ended GPU use;
+-- auditable decisions instead of undocumented trial and error;
+-- reproducible failure recovery;
+-- schema-adaptable deployment output;
+-- optional scaling from KuaiRand-Pure to KuaiRand-1K.
++## Slide 8 — Reproducible hand-in
+ 
+-## Likely judge questions
++- `submission/03_run_iteration_logs/`: all per-iteration and autonomy records.
++- `submission/04_final_submission_results/`: prediction files, checkpoints,
++  result tables, schema proof, checksums, and resource usage.
++- Required Pure CSV SHA-256:
++  `06afca72693636b2e1f0115d8cdaefb05c049c5e3fb032649ce28c3f6f5dd50f`.
++- Independent Starter Kit alignment check and all 23 repository tests pass.
+ 
+-**Why is Recall@50 almost one?** 99.90% of evaluated logged user groups contain
+-50 or fewer candidates. We report this diagnostic explicitly and preserve the
+-required metric rather than hiding the saturation.
++## Likely judge questions
+ 
+-**Is this really autonomous?** The model-driven policy consumes experiment
+-history and emits a strict-schema selection and reflection. A real GPT-5 mini
+-decision over 12 completed records selected seed 44, which was then trained on
+-NSCC and recorded with exact token/cost use. Execution and
+-recovery are bounded; arbitrary generated code is not run on the cluster.
++**Why is Recall@50 almost one on Pure?** Almost every evaluated user has at
++most 50 logged candidates. We disclose the saturation and keep the official
++GAUC/nDCG@5 result separate.
+ 
+-**Why not train for every epoch?** The validation-best DCN peaked early.
+-Eighty-epoch-cap experiments test longer schedules safely, but early stopping
+-prevents the final model from being an overfit last epoch.
++**Is this genuinely OpenAI-driven?** Yes. Six strict-schema GPT-5 mini
++decisions, rationales, reflections, token counts, and resulting metrics are in
++`openai_agent_iterations.jsonl`; no queued decision replaced them.
+ 
+-**Did you use prohibited data?** No. Primary training uses KuaiRand-Pure; the
+-only additional corpus is the explicitly permitted KuaiRand-1K bonus variant.
++**Why did the final ensemble differ from the agent-selected checkpoint?** The
++agent's best experiment reached 0.602373 primary, while the validation-only
++ensemble reached 0.603591. The stronger validation result is the submission;
++the full agent run remains the autonomy evidence.
+ 
+-**Can judges obtain predictions?** Yes. `export-recommendations` writes ranked,
+-label-blind CSV output and a checksum manifest; organizer column names can be
+-applied through a JSON mapping without retraining.
++**Did you use prohibited data?** No. Test outcomes are not read. KuaiRand-1K is
++used only for the explicitly optional bonus benchmark.
 diff --git a/docs/submission_checklist.md b/docs/submission_checklist.md
-index b2e4361..ecc214a 100644
+index b2e4361..a45dc7c 100644
 --- a/docs/submission_checklist.md
 +++ b/docs/submission_checklist.md
-@@ -1,5 +1,9 @@
- # Submission checklist
+@@ -1,41 +1,41 @@
+-# Submission checklist
++# Final submission checklist
  
-+> Historical checklist. The authoritative hand-in is now
-+> submission/03_run_iteration_logs/ and
-+> submission/04_final_submission_results/.
-+
- ## Complete in the repository
+-## Complete in the repository
++## Completed repository deliverables
  
- - [x] Reproducible KuaiRand-Pure preparation and MD5 verification
+-- [x] Reproducible KuaiRand-Pure preparation and MD5 verification
+-- [x] Fixed split manifest and leakage audit
+-- [x] Baselines, modular recommenders, multi-task and pairwise objectives
+-- [x] Validation-best checkpoints and early stopping
+-- [x] Autonomous experiment execution, convergence, and recovery
+-- [x] Optional strict-schema model-driven decision policy
+-- [x] Iteration, resource, token, failure, and intervention records
+-- [x] Label-blind ranked prediction exporter and checksum manifest
+-- [x] KuaiRand-1K bonus preparation, A100 training, checkpoint, and held-out
+-  export path
+-- [x] README, architecture, Devpost draft, pitch outline, and demo script
+-- [x] Professional responsive frontend with personas, real ranked-output API,
+-  scope guidance, successful-results table, and accessible results graph
+-- [x] Automated tests and shell/config validation
++- [x] Exact Starter Kit `long_view` target and date split
++- [x] Official positive-weighted GAUC and mean nDCG@5 evaluation
++- [x] Validation-only model and ensemble selection
++- [x] Label-blind 170,588-row KuaiRand-Pure output in the exact schema
++- [x] Published-baseline comparison and absolute deltas
++- [x] Completed KuaiRand-1K bonus output and checkpoint
++- [x] Six-decision GPT-5 mini autonomous run with exact token usage
++- [x] Per-iteration hypotheses, diffs, metrics, errors, and recoveries
++- [x] Zero-manual-intervention summary and automated-recovery count
++- [x] GPU-hours and API input/output token accounting
++- [x] Component checkpoints, ensemble recipe, checksums, and schema proof
++- [x] Main README, frontend, Devpost draft, pitch deck, and demo script aligned
++- [x] Git LFS rules for the oversized 1K CSV and checkpoint
++- [x] 23 repository tests passing
+ 
+-## Team actions before the Devpost deadline
++## Final human publishing actions
+ 
+-- [ ] Review team contribution wording with all four members
+-- [ ] Commit the repository and push it to a public GitHub URL
+-- [ ] Upload the selected checkpoints/predictions through the organizer's
+-  accepted artifact mechanism; do not commit raw data or credentials
+-- [ ] Replace the generic prediction column mapping if the organizer releases
+-  an exact schema or example
+-- [ ] Insert the official baseline delta if numeric reference scores appear
+-- [ ] Record the three-minute demo using `docs/demo_script.md`
+-- [ ] Upload the demo publicly/unlisted to YouTube
+-- [ ] Paste `docs/devpost.md` into Devpost and add repository/video links
++- [ ] Review team names, contribution wording, and contact details
++- [ ] Run `git lfs install`, commit, and push the repository
++- [ ] Confirm the two 1K files display as Git LFS objects after pushing
++- [ ] Add the public repository and demo-video URLs to Devpost
++- [ ] Record/upload the three-minute demo using `docs/demo_script.md`
++- [ ] Paste/adapt `docs/devpost.md` into the Devpost form
++- [ ] Upload `submission/04_final_submission_results/files/kuairand_pure.csv`
++  wherever the organizer requests the required prediction file
+ - [ ] Submit before **1 September 2026, 12:00pm SGT**
+ 
+-## Claims to avoid
++## Claims to keep precise
+ 
+-- Do not call logged validation metrics hidden-test or leaderboard results.
+-- Do not call the internal popularity delta the official CWM delta.
+-- Do not claim the earlier queued NSCC sweeps made LLM calls. The separate real
+-  GPT-5 mini decision selected the seed-44 robustness run and records its own
+-  actual API usage in `reports/openai_policy_decision.json`.
+-- Do not expose the NSCC password, SSH socket, raw dataset, or API keys.
++- Validation results are not hidden-test or leaderboard scores.
++- GAUC/nDCG@5 are the executable Starter Kit metrics; NDCG@10/Recall@50 are
++  reported separately because the portal asks for them.
++- The final ensemble is validation-best. The OpenAI-selected checkpoint is
++  autonomy evidence and does not replace the stronger ensemble.
++- Manual interventions during the completed model runs: zero. Credential entry
++  and security key rotation are disclosed separately.
++- Never commit passwords, `.env`, NSCC allocation secrets, or raw datasets.
 diff --git a/docs/submission_output.md b/docs/submission_output.md
-index a92378d..f6f25ab 100644
+index a92378d..73ebaca 100644
 --- a/docs/submission_output.md
 +++ b/docs/submission_output.md
-@@ -1,55 +1,35 @@
+@@ -1,55 +1,40 @@
 -# Final model output contract
 +# Official submission output
  
@@ -830,6 +1159,11 @@ index a92378d..f6f25ab 100644
 +six GPT-5 mini choices, rationales, reflections, exact token counts, and
 +measured validation outcomes. That run is autonomy evidence; its checkpoint
 +did not replace the stronger final ensemble.
++
++The optional KuaiRand-1K output is `files/kuairand_1k.csv` with 4,132,081
++aligned rows; its reproducing checkpoint is `checkpoints/kuairand_1k_hashed_fm.pt`.
++Both large bonus artifacts are tracked with Git LFS, so run `git lfs install`
++before committing or cloning the complete submission.
 diff --git a/frontend/app.js b/frontend/app.js
 index ea2695f..5780540 100644
 --- a/frontend/app.js

@@ -10,11 +10,11 @@
   },
   "development_assistant_token_consumption": {
     "status": "measured_from_codex_session_counter",
-    "input_tokens": 77496988,
-    "cached_input_tokens_included_above": 76481024,
-    "output_tokens": 216404,
-    "reasoning_output_tokens_included_above": 57392,
-    "total_tokens": 77713392,
+    "input_tokens": 78216500,
+    "cached_input_tokens_included_above": 77156096,
+    "output_tokens": 229559,
+    "reasoning_output_tokens_included_above": 58611,
+    "total_tokens": 78446059,
     "captured_from": "rollout-2026-08-31T18-42-17-01a05769-a85b-7df0-a103-3a5c04f894e9.jsonl"
   },
   "gpu_time": {
@@ -44,5 +44,5 @@
     "side_fm_context_seed1": 318.9399726249976,
     "side_fm_context_seed2": 344.2862287500175
   },
-  "captured_at_utc": "2026-08-31T14:08:05.021908+00:00"
+  "captured_at_utc": "2026-08-31T15:03:56.962840+00:00"
 }
