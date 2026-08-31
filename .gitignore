@@ -20,3 +20,5 @@ cluster/nscc.env
 non_submission/legacy_click_task/
 !submission/04_final_submission_results/checkpoints/
 !submission/04_final_submission_results/checkpoints/**
+docs/
+docs
